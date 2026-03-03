@@ -23,7 +23,6 @@
       margin: 0;
       padding: 24px;
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      /* Grün statt Blau */
       background: radial-gradient(circle at top, #16a34a 0, #020617 55%);
       color: var(--text);
       font-size: 16px;
@@ -409,8 +408,24 @@
     }
 
     /* Archiv */
+    .archive-columns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .archive-column {
+      flex: 1;
+      min-width: 260px;
+    }
+    .archive-column h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
     .archive-list {
-      margin-top:10px;
+      margin-top: 4px;
       display:flex;
       flex-direction:column;
       gap:8px;
@@ -633,7 +648,16 @@
           <h2>Archivierte Aufgaben</h2>
           <div class="pill">Vom Board ins Archiv verschoben · hier löschbar</div>
         </div>
-        <div class="archive-list" id="archive-list"></div>
+        <div class="archive-columns">
+          <div class="archive-column">
+            <h3>Orga Archiv</h3>
+            <div class="archive-list" id="archive-list-orga"></div>
+          </div>
+          <div class="archive-column">
+            <h3>CS2 Archiv</h3>
+            <div class="archive-list" id="archive-list-cs2"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -811,7 +835,7 @@
         const addBtn = document.createElement("button");
         addBtn.className = "column-add";
         addBtn.title = "Karte in dieser Liste anlegen";
-        addBtn.textContent = "+";   // <--- nur "+" statt "+ Karte"
+        addBtn.textContent = "+";
         addBtn.addEventListener("click", async (e) => {
           e.stopPropagation();
           const title = prompt(`Titel der Karte in "${status}":`);
@@ -837,7 +861,7 @@
           const delListBtn = document.createElement("button");
           delListBtn.className = "list-delete-btn";
           delListBtn.title = `Liste "${status}" inkl. Karten löschen`;
-          delListBtn.textContent = "🗑";     // <--- nur Mülleimer-Symbol
+          delListBtn.textContent = "🗑";
           delListBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             deleteCustomList(board, status);
@@ -1089,7 +1113,7 @@
 
       const table = board === "org" ? "org_tasks" : "cs2_tasks";
 
-      // 1. Alle Karten in dieser Liste löschen
+      // 1. Alle Karten in dieser Liste löschen (nur im aktuellen Board)
       const { error: delTasksErr } = await supa
         .from(table)
         .delete()
@@ -1101,7 +1125,7 @@
         return;
       }
 
-      // 2. Die Liste selbst aus custom_lists entfernen
+      // 2. Die Liste selbst aus custom_lists entfernen (nur dieses Board)
       const { error: delListErr } = await supa
         .from("custom_lists")
         .delete()
@@ -1176,7 +1200,8 @@
     }
 
     /* Archiv laden + löschen */
-    const archiveListEl = document.getElementById("archive-list");
+    const archiveListOrgaEl = document.getElementById("archive-list-orga");
+    const archiveListCs2El = document.getElementById("archive-list-cs2");
 
     async function loadArchive() {
       const { data, error } = await supa
@@ -1190,8 +1215,13 @@
         return;
       }
 
-      archiveListEl.innerHTML = "";
+      archiveListOrgaEl.innerHTML = "";
+      archiveListCs2El.innerHTML = "";
+
       (data || []).forEach(item => {
+        const target = item.board === "org" ? archiveListOrgaEl : archiveListCs2El;
+        if (!target) return;
+
         const div = document.createElement("div");
         div.className = "archive-item";
 
@@ -1214,7 +1244,7 @@
 
         const title = document.createElement("div");
         title.className = "archive-title";
-        title.textContent = `${item.title} (${item.board.toUpperCase()})`;
+        title.textContent = item.title;
 
         const meta = document.createElement("div");
         meta.className = "archive-meta";
@@ -1234,7 +1264,7 @@
           div.appendChild(title);
           div.appendChild(meta);
         }
-        archiveListEl.appendChild(div);
+        target.appendChild(div);
       });
     }
 
