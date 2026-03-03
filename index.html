@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -9,50 +9,51 @@
     :root {
       --bg: #020617;
       --card: #0f172a;
-      --card-soft: #1e293b;
+      --soft: #1f2937;
       --border: #1f2937;
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
       --accent: #38bdf8;
+      --danger: #ef4444;
+      --ok: #22c55e;
+      --warn: #eab308;
     }
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 16px;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1d4ed8 0, #020617 50%);
-      color: var(--text-main);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(circle at top, #1d4ed8 0, #020617 55%);
+      color: var(--text);
+    }
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
     }
     h1 {
       margin: 0 0 12px;
       font-size: 1.6rem;
       font-weight: 700;
     }
-    .app {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
     .tabs {
       display: flex;
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       flex-wrap: wrap;
     }
     .tab-btn {
-      border: 1px solid var(--border);
-      background: #020617cc;
-      padding: 6px 12px;
       border-radius: 999px;
-      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      background: #020617cc;
+      color: var(--muted);
       cursor: pointer;
       font-size: 0.9rem;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      backdrop-filter: blur(10px);
-      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+      backdrop-filter: blur(12px);
+      transition: all .15s;
     }
     .tab-btn span.dot {
       width: 8px;
@@ -61,64 +62,71 @@
       background: var(--border);
     }
     .tab-btn.active {
-      color: var(--text-main);
       border-color: var(--accent);
-      background: #0b1120ee;
+      color: var(--text);
+      background: #020617;
       transform: translateY(-1px);
     }
     .tab-btn.active span.dot {
       background: var(--accent);
     }
-    .tab {
-      display: none;
-    }
-    .tab.active {
-      display: block;
-    }
+    .tab { display: none; }
+    .tab.active { display: block; }
 
     .card {
-      background: var(--card);
+      background: linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.95));
       border-radius: 12px;
-      padding: 12px;
       border: 1px solid var(--border);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+      padding: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.6);
     }
-
-    /* Boards */
-    .board-header {
+    .header {
       display: flex;
-      flex-wrap: wrap;
+      justify-content: space-between;
       gap: 8px;
       align-items: center;
-      margin-bottom: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
-    .board-header h2 {
+    .header h2 {
       margin: 0;
-      font-size: 1rem;
+      font-size: 1.0rem;
       font-weight: 600;
     }
-    .board-header .pill {
-      font-size: 0.75rem;
-      padding: 2px 8px;
+    .pill {
       border-radius: 999px;
       border: 1px solid var(--border);
-      color: var(--text-muted);
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
     }
 
+    /* Board */
     .board {
       display: flex;
       gap: 12px;
       align-items: flex-start;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
     }
-
     .column {
-      min-width: 220px;
-      background: var(--card-soft);
+      min-width: 230px;
+      background: var(--soft);
       border-radius: 10px;
       padding: 8px;
       border: 1px solid var(--border);
+    }
+    .column.todo {
+      border-color: #ef4444bb;
+      background: linear-gradient(180deg,#450a0a,#020617);
+    }
+    .column.doing {
+      border-color: #eab308bb;
+      background: linear-gradient(180deg,#422006,#020617);
+    }
+    .column.done {
+      border-color: #22c55ebb;
+      background: linear-gradient(180deg,#064e3b,#020617);
     }
     .column-header {
       display: flex;
@@ -134,270 +142,311 @@
       font-size: 0.7rem;
       padding: 2px 6px;
       border-radius: 999px;
-      border: 1px solid #ffffff22;
+      border: 1px solid #ffffff33;
+      color: var(--muted);
     }
-    .column.todo {
-      border-color: #ef4444aa;
-      background: linear-gradient(180deg, #450a0a, #111827);
-    }
-    .column.doing {
-      border-color: #eab308aa;
-      background: linear-gradient(180deg, #422006, #111827);
-    }
-    .column.done {
-      border-color: #22c55eaa;
-      background: linear-gradient(180deg, #022c22, #111827);
-    }
-
     .tasks {
       min-height: 40px;
     }
 
     .task {
-      background: #0b1120dd;
-      border-radius: 8px;
+      background: #020617ee;
+      border-radius: 9px;
+      border: 1px solid #ffffff14;
       padding: 6px 8px;
       margin-bottom: 6px;
       cursor: grab;
-      border: 1px solid #ffffff11;
       font-size: 0.85rem;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
     }
     .task:hover {
       border-color: var(--accent);
     }
-    .task-title-row {
+    .task-top {
       display: flex;
       justify-content: space-between;
-      gap: 4px;
+      gap: 6px;
       align-items: center;
     }
+    .task-title {
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+    .task-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .icon-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 0;
+    }
+    .icon-btn.danger { color: var(--danger); }
+    .icon-btn.archive { color: var(--ok); }
     .task-category {
       font-size: 0.7rem;
       padding: 1px 6px;
       border-radius: 999px;
       background: #111827;
-      color: var(--text-muted);
+      color: var(--muted);
+    }
+    .task-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    .add-form {
+    /* Category filter "Bubbles" */
+    .category-filter {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .cat-pill {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #020617dd;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .cat-pill.active {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    /* Forms */
+    .form-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       margin-top: 10px;
     }
-    .add-form input,
-    .add-form textarea,
-    .add-form select {
-      background: #020617;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      color: var(--text-main);
-      font-size: 0.85rem;
-      flex: 1;
-      min-width: 120px;
+    .form-row input,
+    .form-row textarea {
+      background:#020617;
+      border-radius:8px;
+      border:1px solid var(--border);
+      padding:6px 8px;
+      color:var(--text);
+      font-size:.85rem;
+      flex:1;
+      min-width:120px;
     }
-    .add-form textarea {
-      min-height: 60px;
-      resize: vertical;
+    .form-row textarea {
+      min-height:60px;
+      resize:vertical;
     }
-    .add-form button {
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      background: #0ea5e9;
-      color: #0b1120;
-      font-size: 0.85rem;
-      padding: 6px 12px;
-      cursor: pointer;
-      font-weight: 600;
-      white-space: nowrap;
+    .form-row button {
+      border-radius:999px;
+      border:1px solid var(--accent);
+      background:#0ea5e9;
+      color:#020617;
+      font-size:.85rem;
+      padding:6px 12px;
+      cursor:pointer;
+      font-weight:600;
+      white-space:nowrap;
     }
-    .add-form button:hover {
-      filter: brightness(1.1);
-    }
+    .form-row button:hover { filter:brightness(1.08); }
 
     /* Teams */
     .teams-layout {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
     }
-    .team-list {
-      flex: 0 0 220px;
-      max-height: 400px;
-      overflow-y: auto;
+    .teams-left {
+      flex:0 0 230px;
+    }
+    .teams-right {
+      flex:1;
+      min-width:260px;
     }
     .team-item {
-      padding: 6px 8px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin-bottom: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding:6px 8px;
+      border-radius:9px;
+      border:1px solid var(--border);
+      margin-bottom:6px;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:#020617aa;
     }
     .team-item.active {
-      border-color: var(--accent);
-      background: #0b1120;
+      border-color:var(--accent);
+      background:#020617ee;
     }
-    .team-main {
-      flex: 1;
-      min-width: 260px;
-    }
-    .team-header {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 8px;
+    .team-head {
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin-bottom:6px;
     }
     .team-image {
-      width: 64px;
-      height: 64px;
-      border-radius: 12px;
-      background: #030712;
-      border: 1px solid var(--border);
-      object-fit: cover;
+      width:60px;
+      height:60px;
+      border-radius:12px;
+      object-fit:cover;
+      background:#020617;
+      border:1px solid var(--border);
     }
     .team-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      font-size:.8rem;
+      color:var(--muted);
     }
     .players {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
     }
     .player-card {
-      background: var(--card-soft);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      min-width: 160px;
-      font-size: 0.8rem;
-      cursor: grab;
+      background:var(--soft);
+      border-radius:9px;
+      border:1px solid var(--border);
+      padding:6px 8px;
+      min-width:170px;
+      font-size:.8rem;
     }
     .player-card strong {
-      font-size: 0.85rem;
+      font-size:.88rem;
     }
 
     /* Templates */
     .templates-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
     }
     .template-card {
-      flex: 0 0 200px;
-      background: var(--card-soft);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
+      flex:0 0 200px;
+      background:var(--soft);
+      border-radius:10px;
+      border:1px solid var(--border);
+      padding:8px;
+      cursor:pointer;
+      font-size:.85rem;
     }
     .template-card:hover {
-      border-color: var(--accent);
+      border-color:var(--accent);
     }
+
+    /* Archiv */
+    .archive-list {
+      margin-top:8px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      max-height:400px;
+      overflow-y:auto;
+    }
+    .archive-item {
+      background:var(--soft);
+      border-radius:9px;
+      border:1px solid var(--border);
+      padding:6px 8px;
+      font-size:.8rem;
+    }
+    .archive-title { font-weight:600; }
+    .archive-meta { font-size:.75rem; color:var(--muted); margin-top:2px; }
 
     /* Modal */
     .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.8);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 50;
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.8);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      padding:16px;
     }
-    .modal-backdrop.active {
-      display: flex;
-    }
+    .modal-backdrop.active { display:flex; }
     .modal {
-      background: #020617;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 12px;
-      max-width: 420px;
-      width: 100%;
+      background:#020617;
+      border-radius:12px;
+      border:1px solid var(--border);
+      padding:12px;
+      max-width:420px;
+      width:100%;
     }
     .modal header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
     }
     .modal header h3 {
-      margin: 0;
-      font-size: 1rem;
+      margin:0;
+      font-size:1rem;
     }
     .modal-close {
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 0 6px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-    }
-    .modal-close:hover {
-      border-color: var(--border);
-      background: #020617;
+      border:none;
+      background:transparent;
+      cursor:pointer;
+      color:var(--muted);
+      font-size:1.1rem;
+      padding:0 6px;
     }
     .modal textarea {
-      width: 100%;
-      background: #020617;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      color: var(--text-main);
-      min-height: 120px;
-      font-size: 0.85rem;
-      resize: vertical;
+      width:100%;
+      background:#020617;
+      border-radius:8px;
+      border:1px solid var(--border);
+      padding:6px 8px;
+      color:var(--text);
+      min-height:120px;
+      font-size:.85rem;
+      resize:vertical;
     }
     .modal footer {
-      margin-top: 8px;
-      text-align: right;
+      margin-top:8px;
+      text-align:right;
     }
     .modal footer button {
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      background: #0ea5e9;
-      color: #020617;
-      padding: 6px 12px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
+      border-radius:999px;
+      border:1px solid var(--accent);
+      background:#0ea5e9;
+      color:#020617;
+      padding:6px 12px;
+      cursor:pointer;
+      font-size:.85rem;
+      font-weight:600;
     }
   </style>
 </head>
 <body>
   <div class="app">
     <h1>Elements Management Board</h1>
+
     <div class="tabs">
-      <button class="tab-btn active" data-tab="org">
-        <span class="dot"></span> Orgamanagement
-      </button>
-      <button class="tab-btn" data-tab="cs2">
-        <span class="dot"></span> CS2 Management
-      </button>
-      <button class="tab-btn" data-tab="teams">
-        <span class="dot"></span> Teams
-      </button>
-      <button class="tab-btn" data-tab="templates">
-        <span class="dot"></span> Vorlagen
-      </button>
+      <button class="tab-btn active" data-tab="org"><span class="dot"></span>Orgamanagement</button>
+      <button class="tab-btn" data-tab="cs2"><span class="dot"></span>CS2 Management</button>
+      <button class="tab-btn" data-tab="teams"><span class="dot"></span>Teams</button>
+      <button class="tab-btn" data-tab="templates"><span class="dot"></span>Vorlagen</button>
+      <button class="tab-btn" data-tab="archive"><span class="dot"></span>Archiv</button>
     </div>
 
-    <!-- Orgamanagement Tab -->
+    <!-- Org Tab -->
     <div id="tab-org" class="tab active">
       <div class="card">
-        <div class="board-header">
+        <div class="header">
           <h2>Orgamanagement Board</h2>
           <div class="pill">To Do = Rot · Doing = Gelb · Done = Grün</div>
         </div>
+
+        <div class="category-filter" data-board="org"></div>
+
         <div class="board" data-board="org">
           <div class="column todo" data-status="todo">
             <div class="column-header">
@@ -422,7 +471,7 @@
           </div>
         </div>
 
-        <form class="add-form" data-board="org">
+        <form class="form-row" data-board="org">
           <input type="text" name="title" placeholder="Neue Aufgabe..." />
           <input type="text" name="category" placeholder="Kategorie (z.B. Probleme)" />
           <textarea name="description" placeholder="Beschreibung / Problem erläutern..."></textarea>
@@ -431,13 +480,16 @@
       </div>
     </div>
 
-    <!-- CS2 Management Tab -->
+    <!-- CS2 Tab -->
     <div id="tab-cs2" class="tab">
       <div class="card">
-        <div class="board-header">
+        <div class="header">
           <h2>CS2 Management Board</h2>
           <div class="pill">Eigene Aufgaben nur für CS2</div>
         </div>
+
+        <div class="category-filter" data-board="cs2"></div>
+
         <div class="board" data-board="cs2">
           <div class="column todo" data-status="todo">
             <div class="column-header">
@@ -462,7 +514,7 @@
           </div>
         </div>
 
-        <form class="add-form" data-board="cs2">
+        <form class="form-row" data-board="cs2">
           <input type="text" name="title" placeholder="Neue CS2-Aufgabe..." />
           <input type="text" name="category" placeholder="Kategorie (z.B. Scrims, Taktik)" />
           <textarea name="description" placeholder="Details / Notizen..."></textarea>
@@ -474,23 +526,23 @@
     <!-- Teams Tab -->
     <div id="tab-teams" class="tab">
       <div class="card">
-        <div class="board-header">
+        <div class="header">
           <h2>Teams & Spieler</h2>
-          <div class="pill">Teamkarten & Durchschnitts-Elo</div>
+          <div class="pill">Teambild · Spieler · Ø Elo</div>
         </div>
         <div class="teams-layout">
-          <div class="team-list card">
+          <div class="teams-left card">
             <h3 style="margin-top:0;font-size:0.95rem;">Teams</h3>
             <div id="team-list"></div>
-            <form class="add-form" id="team-form">
+
+            <form class="form-row" id="team-form">
               <input type="text" name="name" placeholder="Teamname" />
               <input type="text" name="image_url" placeholder="Bild-URL (optional)" />
               <button type="submit">+ Team</button>
             </form>
           </div>
-
-          <div class="team-main card">
-            <div class="team-header">
+          <div class="teams-right card">
+            <div class="team-head">
               <img id="team-image" class="team-image" alt="Teambild" />
               <div>
                 <div id="team-name" style="font-weight:600;">Kein Team ausgewählt</div>
@@ -498,8 +550,7 @@
               </div>
             </div>
             <div class="players" id="players"></div>
-
-            <form class="add-form" id="player-form">
+            <form class="form-row" id="player-form">
               <input type="text" name="ingame_name" placeholder="Ingame-Name" />
               <input type="text" name="real_name" placeholder="Echter Name" />
               <input type="number" name="elo" placeholder="Elo" />
@@ -514,50 +565,54 @@
     <!-- Templates Tab -->
     <div id="tab-templates" class="tab">
       <div class="card">
-        <div class="board-header">
+        <div class="header">
           <h2>Vorlagen</h2>
-          <div class="pill">Karten mit gespeicherten Vorlagen</div>
+          <div class="pill">z.B. Wochenbericht als Karte</div>
         </div>
-
         <div class="templates-grid" id="templates-grid"></div>
-
-        <form class="add-form" id="template-form">
+        <form class="form-row" id="template-form">
           <input type="text" name="title" placeholder="Vorlagenname (z.B. Wochenbericht)" />
           <textarea name="content" placeholder="Text der Vorlage..."></textarea>
           <button type="submit">+ Vorlage speichern</button>
         </form>
       </div>
     </div>
+
+    <!-- Archiv Tab -->
+    <div id="tab-archive" class="tab">
+      <div class="card">
+        <div class="header">
+          <h2>Archivierte Aufgaben</h2>
+          <div class="pill">Aufgaben, die vom Board ins Archiv geschoben wurden</div>
+        </div>
+        <div class="archive-list" id="archive-list"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Modals -->
+  <!-- Task Modal -->
   <div class="modal-backdrop" id="task-modal-backdrop">
     <div class="modal">
       <header>
         <h3 id="task-modal-title">Aufgabe</h3>
         <button class="modal-close" data-close-task>&times;</button>
       </header>
-      <div>
-        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">
-          Kategorie: <span id="task-modal-category"></span>
-        </div>
-        <textarea id="task-modal-description"></textarea>
-      </div>
+      <div class="pill" id="task-modal-info">Liste / Kategorie</div>
+      <textarea id="task-modal-description"></textarea>
       <footer>
         <button id="task-modal-save">Speichern</button>
       </footer>
     </div>
   </div>
 
+  <!-- Template Modal -->
   <div class="modal-backdrop" id="template-modal-backdrop">
     <div class="modal">
       <header>
         <h3 id="template-modal-title">Vorlage</h3>
         <button class="modal-close" data-close-template>&times;</button>
       </header>
-      <div>
-        <textarea id="template-modal-content" readonly></textarea>
-      </div>
+      <textarea id="template-modal-content" readonly></textarea>
       <footer>
         <button data-close-template>Schließen</button>
       </footer>
@@ -577,15 +632,21 @@
         document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
         btn.classList.add("active");
         document.getElementById("tab-" + tab).classList.add("active");
+
+        if (tab === "archive") loadArchive();
+        if (tab === "teams") loadTeams();
+        if (tab === "templates") loadTemplates();
       });
     });
 
     /* Boards (Org & CS2) */
 
+    const categoryFilterState = { org: "ALL", cs2: "ALL" };
+
     async function loadBoard(board) {
       const table = board === "org" ? "org_tasks" : "cs2_tasks";
       const boardEl = document.querySelector(`.board[data-board="${board}"]`);
-      if (!boardEl) return;
+      const filterEl = document.querySelector(`.category-filter[data-board="${board}"]`);
 
       const { data, error } = await supa
         .from(table)
@@ -598,65 +659,132 @@
         return;
       }
 
-      boardEl.querySelectorAll(".tasks").forEach(t => (t.innerHTML = ""));
+      // Kategorien sammeln
+      const categories = new Set();
+      for (const t of data) {
+        if (t.category && t.category.trim() !== "") categories.add(t.category.trim());
+      }
 
+      // Filter-Pills
+      filterEl.innerHTML = "";
+      const allBtn = document.createElement("button");
+      allBtn.className = "cat-pill" + (categoryFilterState[board] === "ALL" ? " active" : "");
+      allBtn.textContent = "Alle";
+      allBtn.addEventListener("click", () => {
+        categoryFilterState[board] = "ALL";
+        loadBoard(board);
+      });
+      filterEl.appendChild(allBtn);
+
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "cat-pill" + (categoryFilterState[board] === cat ? " active" : "");
+        btn.textContent = cat;
+        btn.addEventListener("click", () => {
+          categoryFilterState[board] = cat;
+          loadBoard(board);
+        });
+        filterEl.appendChild(btn);
+      });
+
+      // Board leeren
+      boardEl.querySelectorAll(".column .tasks").forEach(el => el.innerHTML = "");
+
+      // Aufgaben einfügen
       data.forEach(task => {
+        if (categoryFilterState[board] !== "ALL") {
+          if (!task.category || task.category.trim() !== categoryFilterState[board]) return;
+        }
         addTaskToBoard(board, task);
       });
     }
 
     function addTaskToBoard(board, task) {
       const boardEl = document.querySelector(`.board[data-board="${board}"]`);
-      if (!boardEl) return;
       const col = boardEl.querySelector(`.column[data-status="${task.status}"] .tasks`);
       if (!col) return;
 
-      const div = document.createElement("div");
-      div.className = "task";
-      div.draggable = true;
-      div.dataset.id = task.id;
-      div.dataset.board = board;
-      div.dataset.table = board === "org" ? "org_tasks" : "cs2_tasks";
-      div.dataset.category = task.category || "Allgemein";
-      div.dataset.description = task.description || "";
-      div.dataset.status = task.status;
+      const el = document.createElement("div");
+      el.className = "task";
+      el.draggable = true;
+      el.dataset.id = task.id;
+      el.dataset.board = board;
+      el.dataset.status = task.status;
+      el.dataset.category = task.category || "";
+      el.dataset.description = task.description || "";
+      el.dataset.title = task.title;
 
-      const titleRow = document.createElement("div");
-      titleRow.className = "task-title-row";
+      const top = document.createElement("div");
+      top.className = "task-top";
 
       const titleSpan = document.createElement("span");
+      titleSpan.className = "task-title";
       titleSpan.textContent = task.title;
+
+      const actions = document.createElement("div");
+      actions.className = "task-actions";
+
+      const archiveBtn = document.createElement("button");
+      archiveBtn.className = "icon-btn archive";
+      archiveBtn.title = "In Archiv verschieben";
+      archiveBtn.textContent = "📦";
+      archiveBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        archiveTask(el);
+      });
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "icon-btn danger";
+      deleteBtn.title = "Aufgabe löschen";
+      deleteBtn.textContent = "🗑";
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteTask(el);
+      });
+
+      actions.appendChild(archiveBtn);
+      actions.appendChild(deleteBtn);
+
+      top.appendChild(titleSpan);
 
       const catSpan = document.createElement("span");
       catSpan.className = "task-category";
       catSpan.textContent = task.category || "Allgemein";
 
-      titleRow.appendChild(titleSpan);
-      titleRow.appendChild(catSpan);
+      const right = document.createElement("div");
+      right.style.display = "flex";
+      right.style.gap = "4px";
+      right.style.alignItems = "center";
+      right.appendChild(catSpan);
+      right.appendChild(actions);
 
-      div.appendChild(titleRow);
+      top.appendChild(right);
 
-      div.addEventListener("dragstart", (e) => {
+      el.appendChild(top);
+
+      if (task.description) {
+        const desc = document.createElement("div");
+        desc.className = "task-desc";
+        desc.textContent = task.description;
+        el.appendChild(desc);
+      }
+
+      el.addEventListener("dragstart", (e) => {
         e.dataTransfer.setData("text/plain", JSON.stringify({
           id: task.id,
           board
         }));
       });
 
-      // Klick für Popup
-      div.addEventListener("click", (e) => {
-        // nicht auslösen, wenn gerade Drag startet (kleiner hack)
-        if (e.target.closest(".task-category")) return;
-        openTaskModal(div);
-      });
+      el.addEventListener("click", () => openTaskModal(el));
 
-      col.appendChild(div);
+      col.appendChild(el);
     }
 
-    // Drop-Ziele
+    // Drag & Drop
     document.querySelectorAll(".board").forEach(boardEl => {
       boardEl.querySelectorAll(".column").forEach(col => {
-        col.addEventListener("dragover", (e) => e.preventDefault());
+        col.addEventListener("dragover", e => e.preventDefault());
         col.addEventListener("drop", async (e) => {
           e.preventDefault();
           const payload = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
@@ -683,8 +811,8 @@
       });
     });
 
-    // Add-Forms
-    document.querySelectorAll(".add-form[data-board]").forEach(form => {
+    // Neue Aufgabe
+    document.querySelectorAll("form.form-row[data-board]").forEach(form => {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const board = form.dataset.board;
@@ -692,7 +820,6 @@
         const title = form.title.value.trim();
         const category = (form.category.value || "Allgemein").trim();
         const description = form.description.value.trim();
-
         if (!title) return;
 
         const { data, error } = await supa
@@ -707,51 +834,49 @@
           return;
         }
 
-        addTaskToBoard(board, data);
         form.reset();
+        loadBoard(board);
       });
     });
 
     /* Task Modal */
     const taskModalBackdrop = document.getElementById("task-modal-backdrop");
     const taskModalTitle = document.getElementById("task-modal-title");
-    const taskModalCategory = document.getElementById("task-modal-category");
+    const taskModalInfo = document.getElementById("task-modal-info");
     const taskModalDescription = document.getElementById("task-modal-description");
     const taskModalSave = document.getElementById("task-modal-save");
-
-    let currentTaskElement = null;
+    let currentTaskEl = null;
 
     function openTaskModal(taskEl) {
-      currentTaskElement = taskEl;
-      taskModalTitle.textContent = taskEl.textContent.trim();
-      taskModalCategory.textContent = taskEl.dataset.category;
+      currentTaskEl = taskEl;
+      taskModalTitle.textContent = taskEl.dataset.title;
+      const cat = taskEl.dataset.category || "Allgemein";
+      const status = taskEl.dataset.status;
+      taskModalInfo.textContent = `Kategorie: ${cat} · Status: ${status}`;
       taskModalDescription.value = taskEl.dataset.description || "";
       taskModalBackdrop.classList.add("active");
     }
-
     function closeTaskModal() {
       taskModalBackdrop.classList.remove("active");
-      currentTaskElement = null;
+      currentTaskEl = null;
     }
-
     document.querySelectorAll("[data-close-task]").forEach(btn => {
       btn.addEventListener("click", closeTaskModal);
     });
-
     taskModalBackdrop.addEventListener("click", (e) => {
       if (e.target === taskModalBackdrop) closeTaskModal();
     });
 
     taskModalSave.addEventListener("click", async () => {
-      if (!currentTaskElement) return;
-      const id = currentTaskElement.dataset.id;
-      const board = currentTaskElement.dataset.board;
-      const table = currentTaskElement.dataset.table;
-      const newDescription = taskModalDescription.value;
+      if (!currentTaskEl) return;
+      const id = currentTaskEl.dataset.id;
+      const board = currentTaskEl.dataset.board;
+      const table = board === "org" ? "org_tasks" : "cs2_tasks";
+      const newDesc = taskModalDescription.value;
 
       const { error } = await supa
         .from(table)
-        .update({ description: newDescription })
+        .update({ description: newDesc })
         .eq("id", id);
 
       if (error) {
@@ -760,12 +885,122 @@
         return;
       }
 
-      currentTaskElement.dataset.description = newDescription;
+      currentTaskEl.dataset.description = newDesc;
+      const descEl = currentTaskEl.querySelector(".task-desc");
+      if (descEl) descEl.textContent = newDesc;
+      else if (newDesc) {
+        const d = document.createElement("div");
+        d.className = "task-desc";
+        d.textContent = newDesc;
+        currentTaskEl.appendChild(d);
+      }
       closeTaskModal();
     });
 
-    /* Teams */
+    /* Löschen & Archivieren */
 
+    async function deleteTask(taskEl) {
+      const id = taskEl.dataset.id;
+      const board = taskEl.dataset.board;
+      const table = board === "org" ? "org_tasks" : "cs2_tasks";
+      if (!confirm(`Aufgabe "${taskEl.dataset.title}" wirklich löschen?`)) return;
+
+      const { error } = await supa
+        .from(table)
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        console.error(error);
+        alert("Fehler beim Löschen: " + (error.message || JSON.stringify(error)));
+        return;
+      }
+
+      taskEl.remove();
+    }
+
+    async function archiveTask(taskEl) {
+      const id = taskEl.dataset.id;
+      const board = taskEl.dataset.board;
+      const table = board === "org" ? "org_tasks" : "cs2_tasks";
+
+      const payload = {
+        board,
+        title: taskEl.dataset.title,
+        description: taskEl.dataset.description || null,
+        status: taskEl.dataset.status || null,
+        category: taskEl.dataset.category || null
+      };
+
+      const { error: insertErr } = await supa
+        .from("archive_tasks")
+        .insert(payload);
+
+      if (insertErr) {
+        console.error(insertErr);
+        alert("Fehler beim Archivieren: " + (insertErr.message || JSON.stringify(insertErr)));
+        return;
+      }
+
+      const { error: delErr } = await supa
+        .from(table)
+        .delete()
+        .eq("id", id);
+
+      if (delErr) {
+        console.error(delErr);
+        alert("Fehler beim Entfernen vom Board: " + (delErr.message || JSON.stringify(delErr)));
+        return;
+      }
+
+      taskEl.remove();
+    }
+
+    /* Archiv laden */
+    const archiveListEl = document.getElementById("archive-list");
+
+    async function loadArchive() {
+      const { data, error } = await supa
+        .from("archive_tasks")
+        .select("*")
+        .order("archived_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        alert("Fehler beim Laden des Archivs: " + (error.message || JSON.stringify(error)));
+        return;
+      }
+
+      archiveListEl.innerHTML = "";
+      (data || []).forEach(item => {
+        const div = document.createElement("div");
+        div.className = "archive-item";
+
+        const title = document.createElement("div");
+        title.className = "archive-title";
+        title.textContent = `${item.title} (${item.board.toUpperCase()})`;
+
+        const meta = document.createElement("div");
+        meta.className = "archive-meta";
+        const dateStr = item.archived_at ? new Date(item.archived_at).toLocaleString() : "-";
+        meta.textContent = `Kategorie: ${item.category || "-"} · Status: ${item.status || "-"} · Archiviert: ${dateStr}`;
+
+        if (item.description) {
+          const desc = document.createElement("div");
+          desc.className = "task-desc";
+          desc.textContent = item.description;
+          div.appendChild(title);
+          div.appendChild(meta);
+          div.appendChild(desc);
+        } else {
+          div.appendChild(title);
+          div.appendChild(meta);
+        }
+        archiveListEl.appendChild(div);
+      });
+    }
+
+    /* Teams */
     const teamListEl = document.getElementById("team-list");
     const teamForm = document.getElementById("team-form");
     const playerForm = document.getElementById("player-form");
@@ -773,7 +1008,6 @@
     const teamMetaEl = document.getElementById("team-meta");
     const teamImageEl = document.getElementById("team-image");
     const playersEl = document.getElementById("players");
-
     let currentTeamId = null;
 
     async function loadTeams() {
@@ -793,7 +1027,7 @@
         const div = document.createElement("div");
         div.className = "team-item";
         div.dataset.id = team.id;
-        div.innerHTML = `<span>${team.name}</span>`;
+        div.innerHTML = `<span>${team.name}</span><span class="column-pill">Team</span>`;
         div.addEventListener("click", () => {
           selectTeam(team);
         });
@@ -803,6 +1037,20 @@
       if (data.length && !currentTeamId) {
         selectTeam(data[0]);
       }
+    }
+
+    async function selectTeam(team) {
+      currentTeamId = team.id;
+      document.querySelectorAll(".team-item").forEach(el => {
+        el.classList.toggle("active", el.dataset.id == team.id);
+      });
+      teamNameEl.textContent = team.name;
+      if (team.image_url) {
+        teamImageEl.src = team.image_url;
+      } else {
+        teamImageEl.removeAttribute("src");
+      }
+      await loadPlayers(team.id);
     }
 
     async function loadPlayers(teamId) {
@@ -823,26 +1071,21 @@
       let countElo = 0;
 
       data.forEach(player => {
-        const card = document.createElement("div");
-        card.className = "player-card";
-        card.draggable = true;
-
-        const elo = player.elo ?? "-";
         if (player.elo != null) {
           sumElo += player.elo;
           countElo++;
         }
-
+        const card = document.createElement("div");
+        card.className = "player-card";
         card.innerHTML = `
           <strong>${player.ingame_name}</strong>
           <div>${player.real_name || ""}</div>
-          <div>Elo: ${elo}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);">
+          <div>Elo: ${player.elo ?? "-"}</div>
+          <div style="font-size:0.75rem;color:var(--muted);">
             Beitritt: ${player.join_date || "-"}<br />
             Zuletzt bearbeitet: ${player.updated_at ? new Date(player.updated_at).toLocaleDateString() : "-"}
           </div>
         `;
-
         playersEl.appendChild(card);
       });
 
@@ -852,20 +1095,6 @@
       } else {
         teamMetaEl.textContent = `Spieler: ${data.length} · Keine Elo-Daten`;
       }
-    }
-
-    function selectTeam(team) {
-      currentTeamId = team.id;
-      document.querySelectorAll(".team-item").forEach(el => {
-        el.classList.toggle("active", el.dataset.id == team.id);
-      });
-      teamNameEl.textContent = team.name;
-      if (team.image_url) {
-        teamImageEl.src = team.image_url;
-      } else {
-        teamImageEl.removeAttribute("src");
-      }
-      loadPlayers(team.id);
     }
 
     teamForm.addEventListener("submit", async (e) => {
@@ -920,36 +1149,11 @@
     });
 
     /* Templates */
-
     const templatesGrid = document.getElementById("templates-grid");
     const templateForm = document.getElementById("template-form");
     const templateModalBackdrop = document.getElementById("template-modal-backdrop");
     const templateModalTitle = document.getElementById("template-modal-title");
     const templateModalContent = document.getElementById("template-modal-content");
-
-    async function loadTemplates() {
-      const { data, error } = await supa
-        .from("templates")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Laden der Vorlagen: " + (error.message || JSON.stringify(error)));
-        return;
-      }
-
-      templatesGrid.innerHTML = "";
-      data.forEach(tpl => {
-        const card = document.createElement("div");
-        card.className = "template-card";
-        card.textContent = tpl.title;
-        card.addEventListener("click", () => {
-          openTemplateModal(tpl);
-        });
-        templatesGrid.appendChild(card);
-      });
-    }
 
     templateForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -971,16 +1175,38 @@
       loadTemplates();
     });
 
+    async function loadTemplates() {
+      const { data, error } = await supa
+        .from("templates")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        alert("Fehler beim Laden der Vorlagen: " + (error.message || JSON.stringify(error)));
+        return;
+      }
+
+      templatesGrid.innerHTML = "";
+      (data || []).forEach(tpl => {
+        const card = document.createElement("div");
+        card.className = "template-card";
+        card.textContent = tpl.title;
+        card.addEventListener("click", () => {
+          openTemplateModal(tpl);
+        });
+        templatesGrid.appendChild(card);
+      });
+    }
+
     function openTemplateModal(tpl) {
       templateModalTitle.textContent = tpl.title;
       templateModalContent.value = tpl.content || "";
       templateModalBackdrop.classList.add("active");
     }
-
     function closeTemplateModal() {
       templateModalBackdrop.classList.remove("active");
     }
-
     document.querySelectorAll("[data-close-template]").forEach(btn => {
       btn.addEventListener("click", closeTemplateModal);
     });
