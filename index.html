@@ -79,9 +79,8 @@
     <input type="text" id="new-title" placeholder="Neue Aufgabe..." />
     <button type="submit">+ Hinzufügen</button>
   </form>
-
   <script>
-    // ⬇⬇⬇ HIER gleich deine Supabase-Daten einsetzen ⬇⬇⬇
+    // Supabase Konfiguration
     const SUPABASE_URL = "https://bdbgenfksxbspkchakav.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_z188lmhx8TUaNan8fQGZzw_z3zwZ87o";
 
@@ -95,7 +94,7 @@
 
       if (error) {
         console.error(error);
-        alert("Fehler beim Laden der Aufgaben");
+        alert("Fehler beim Laden der Aufgaben: " + (error.message || JSON.stringify(error)));
         return;
       }
 
@@ -135,11 +134,11 @@
         const taskId = e.dataTransfer.getData("text/plain");
         const newStatus = col.dataset.status;
 
-        // Visuell sofort verschieben:
         const taskEl = document.querySelector(`.task[data-id="${taskId}"]`);
-        col.querySelector(".tasks").appendChild(taskEl);
+        if (taskEl) {
+          col.querySelector(".tasks").appendChild(taskEl);
+        }
 
-        // In Supabase updaten:
         const { error } = await client
           .from("tasks")
           .update({ status: newStatus })
@@ -147,7 +146,7 @@
 
         if (error) {
           console.error(error);
-          alert("Fehler beim Aktualisieren des Status");
+          alert("Fehler beim Aktualisieren des Status: " + (error.message || JSON.stringify(error)));
         }
       });
     });
@@ -168,7 +167,7 @@
 
       if (error) {
         console.error(error);
-        alert("Fehler beim Anlegen der Aufgabe");
+        alert("Fehler beim Anlegen der Aufgabe: " + (error.message || JSON.stringify(error)));
         return;
       }
 
@@ -176,8 +175,9 @@
       input.value = "";
     });
 
-    // Beim Laden der Seite
+    // Beim Laden der Seite Daten holen
     loadTasks();
   </script>
+  
 </body>
 </html>
