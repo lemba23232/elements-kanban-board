@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -128,6 +128,10 @@
       border-color: #22c55ebb;
       background: linear-gradient(180deg,#064e3b,#020617);
     }
+    .column.extra {
+      border-color: #38bdf8aa;
+      background: linear-gradient(180deg,#0f172a,#020617);
+    }
     .column-header {
       display: flex;
       justify-content: space-between;
@@ -203,7 +207,7 @@
       white-space: nowrap;
     }
 
-    /* Category filter "Bubbles" */
+    /* Category filter "bubbles" */
     .category-filter {
       display: flex;
       gap: 6px;
@@ -259,6 +263,36 @@
     }
     .form-row button:hover { filter:brightness(1.08); }
 
+    .extra-form {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .extra-form input,
+    .extra-form textarea {
+      background:#020617;
+      border-radius:8px;
+      border:1px solid var(--border);
+      padding:4px 6px;
+      color:var(--text);
+      font-size:.78rem;
+    }
+    .extra-form textarea {
+      min-height:50px;
+      resize:vertical;
+    }
+    .extra-form button {
+      border-radius:999px;
+      border:1px solid var(--accent);
+      background:#0ea5e9;
+      color:#020617;
+      font-size:.78rem;
+      padding:4px 8px;
+      cursor:pointer;
+      align-self:flex-end;
+    }
+
     /* Teams */
     .teams-layout {
       display:flex;
@@ -282,6 +316,11 @@
       justify-content:space-between;
       align-items:center;
       background:#020617aa;
+    }
+    .team-label {
+      display:flex;
+      gap:4px;
+      align-items:center;
     }
     .team-item.active {
       border-color:var(--accent);
@@ -317,9 +356,20 @@
       padding:6px 8px;
       min-width:170px;
       font-size:.8rem;
+      position:relative;
     }
     .player-card strong {
       font-size:.88rem;
+    }
+    .player-delete {
+      position:absolute;
+      top:4px;
+      right:4px;
+      border:none;
+      background:transparent;
+      color:var(--danger);
+      cursor:pointer;
+      font-size:.85rem;
     }
 
     /* Templates */
@@ -356,9 +406,20 @@
       border:1px solid var(--border);
       padding:6px 8px;
       font-size:.8rem;
+      position:relative;
     }
     .archive-title { font-weight:600; }
     .archive-meta { font-size:.75rem; color:var(--muted); margin-top:2px; }
+    .archive-delete {
+      position:absolute;
+      top:4px;
+      right:4px;
+      border:none;
+      background:transparent;
+      color:var(--danger);
+      cursor:pointer;
+      font-size:.85rem;
+    }
 
     /* Modal */
     .modal-backdrop {
@@ -442,7 +503,7 @@
       <div class="card">
         <div class="header">
           <h2>Orgamanagement Board</h2>
-          <div class="pill">To Do = Rot · Doing = Gelb · Done = Grün</div>
+          <div class="pill">To Do = Rot · Doing = Gelb · Done = Grün + Extra-Spalte</div>
         </div>
 
         <div class="category-filter" data-board="org"></div>
@@ -468,6 +529,19 @@
               <div class="column-pill">Erledigt</div>
             </div>
             <div class="tasks"></div>
+          </div>
+          <!-- Extra-Spalte rechts von Done -->
+          <div class="column extra" data-status="extra-org">
+            <div class="column-header">
+              <div class="column-title">Extra</div>
+              <div class="column-pill">Benutzerdefiniert</div>
+            </div>
+            <div class="tasks"></div>
+            <form class="extra-form" data-board="org">
+              <input type="text" name="title" placeholder="Titel der Karte..." />
+              <textarea name="description" placeholder="Beschreibung..."></textarea>
+              <button type="submit">+ Karte</button>
+            </form>
           </div>
         </div>
 
@@ -512,6 +586,19 @@
             </div>
             <div class="tasks"></div>
           </div>
+          <!-- Extra-Spalte -->
+          <div class="column extra" data-status="extra-cs2">
+            <div class="column-header">
+              <div class="column-title">Extra</div>
+              <div class="column-pill">Benutzerdefiniert</div>
+            </div>
+            <div class="tasks"></div>
+            <form class="extra-form" data-board="cs2">
+              <input type="text" name="title" placeholder="Titel der Karte..." />
+              <textarea name="description" placeholder="Beschreibung..."></textarea>
+              <button type="submit">+ Karte</button>
+            </form>
+          </div>
         </div>
 
         <form class="form-row" data-board="cs2">
@@ -528,7 +615,7 @@
       <div class="card">
         <div class="header">
           <h2>Teams & Spieler</h2>
-          <div class="pill">Teambild · Spieler · Ø Elo</div>
+          <div class="pill">Teambild · Spieler · Ø Elo · Löschbar</div>
         </div>
         <div class="teams-layout">
           <div class="teams-left card">
@@ -583,7 +670,7 @@
       <div class="card">
         <div class="header">
           <h2>Archivierte Aufgaben</h2>
-          <div class="pill">Aufgaben, die vom Board ins Archiv geschoben wurden</div>
+          <div class="pill">Vom Board ins Archiv verschoben · hier löschbar</div>
         </div>
         <div class="archive-list" id="archive-list"></div>
       </div>
@@ -745,8 +832,6 @@
       actions.appendChild(archiveBtn);
       actions.appendChild(deleteBtn);
 
-      top.appendChild(titleSpan);
-
       const catSpan = document.createElement("span");
       catSpan.className = "task-category";
       catSpan.textContent = task.category || "Allgemein";
@@ -758,6 +843,7 @@
       right.appendChild(catSpan);
       right.appendChild(actions);
 
+      top.appendChild(titleSpan);
       top.appendChild(right);
 
       el.appendChild(top);
@@ -811,7 +897,7 @@
       });
     });
 
-    // Neue Aufgabe
+    // Neue Aufgaben in ToDo
     document.querySelectorAll("form.form-row[data-board]").forEach(form => {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -822,15 +908,39 @@
         const description = form.description.value.trim();
         if (!title) return;
 
-        const { data, error } = await supa
+        const { error } = await supa
           .from(table)
-          .insert({ title, status: "todo", category, description })
-          .select()
-          .single();
+          .insert({ title, status: "todo", category, description });
 
         if (error) {
           console.error(error);
           alert("Fehler beim Anlegen der Aufgabe: " + (error.message || JSON.stringify(error)));
+          return;
+        }
+
+        form.reset();
+        loadBoard(board);
+      });
+    });
+
+    // Extra-Spalten-Karten
+    document.querySelectorAll("form.extra-form").forEach(form => {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const board = form.dataset.board;
+        const table = board === "org" ? "org_tasks" : "cs2_tasks";
+        const title = form.title.value.trim();
+        const description = form.description.value.trim();
+        if (!title) return;
+        const status = board === "org" ? "extra-org" : "extra-cs2";
+
+        const { error } = await supa
+          .from(table)
+          .insert({ title, status, category: "Extra", description });
+
+        if (error) {
+          console.error(error);
+          alert("Fehler beim Anlegen der Extra-Karte: " + (error.message || JSON.stringify(error)));
           return;
         }
 
@@ -956,7 +1066,7 @@
       taskEl.remove();
     }
 
-    /* Archiv laden */
+    /* Archiv laden + löschen */
     const archiveListEl = document.getElementById("archive-list");
 
     async function loadArchive() {
@@ -976,6 +1086,23 @@
         const div = document.createElement("div");
         div.className = "archive-item";
 
+        const delBtn = document.createElement("button");
+        delBtn.className = "archive-delete";
+        delBtn.title = "Archiv-Eintrag löschen";
+        delBtn.textContent = "🗑";
+        delBtn.addEventListener("click", async () => {
+          const { error: delErr } = await supa
+            .from("archive_tasks")
+            .delete()
+            .eq("id", item.id);
+          if (delErr) {
+            console.error(delErr);
+            alert("Fehler beim Löschen im Archiv: " + (delErr.message || JSON.stringify(delErr)));
+            return;
+          }
+          div.remove();
+        });
+
         const title = document.createElement("div");
         title.className = "archive-title";
         title.textContent = `${item.title} (${item.board.toUpperCase()})`;
@@ -989,10 +1116,12 @@
           const desc = document.createElement("div");
           desc.className = "task-desc";
           desc.textContent = item.description;
+          div.appendChild(delBtn);
           div.appendChild(title);
           div.appendChild(meta);
           div.appendChild(desc);
         } else {
+          div.appendChild(delBtn);
           div.appendChild(title);
           div.appendChild(meta);
         }
@@ -1009,6 +1138,7 @@
     const teamImageEl = document.getElementById("team-image");
     const playersEl = document.getElementById("players");
     let currentTeamId = null;
+    let teamsCache = [];
 
     async function loadTeams() {
       const { data, error } = await supa
@@ -1022,34 +1152,71 @@
         return;
       }
 
+      teamsCache = data || [];
+      renderTeamList();
+      if (teamsCache.length && !currentTeamId) {
+        selectTeam(teamsCache[0]);
+      } else if (currentTeamId) {
+        const t = teamsCache.find(t => t.id === currentTeamId);
+        if (t) selectTeam(t); else resetTeamView();
+      }
+    }
+
+    function renderTeamList() {
       teamListEl.innerHTML = "";
-      data.forEach(team => {
+      teamsCache.forEach(team => {
         const div = document.createElement("div");
-        div.className = "team-item";
+        div.className = "team-item" + (team.id === currentTeamId ? " active" : "");
         div.dataset.id = team.id;
-        div.innerHTML = `<span>${team.name}</span><span class="column-pill">Team</span>`;
-        div.addEventListener("click", () => {
-          selectTeam(team);
+
+        const label = document.createElement("div");
+        label.className = "team-label";
+        label.innerHTML = `<span>${team.name}</span>`;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "icon-btn danger";
+        deleteBtn.title = "Team löschen";
+        deleteBtn.textContent = "🗑";
+        deleteBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          if (!confirm(`Team "${team.name}" inkl. Spieler löschen?`)) return;
+          // erst Spieler löschen
+          await supa.from("players").delete().eq("team_id", team.id);
+          // dann Team löschen
+          const { error } = await supa.from("teams").delete().eq("id", team.id);
+          if (error) {
+            console.error(error);
+            alert("Fehler beim Löschen des Teams: " + (error.message || JSON.stringify(error)));
+            return;
+          }
+          if (currentTeamId === team.id) {
+            currentTeamId = null;
+            resetTeamView();
+          }
+          loadTeams();
         });
+
+        div.addEventListener("click", () => selectTeam(team));
+
+        div.appendChild(label);
+        div.appendChild(deleteBtn);
         teamListEl.appendChild(div);
       });
+    }
 
-      if (data.length && !currentTeamId) {
-        selectTeam(data[0]);
-      }
+    function resetTeamView() {
+      teamNameEl.textContent = "Kein Team ausgewählt";
+      teamMetaEl.textContent = "Bitte links ein Team auswählen.";
+      teamImageEl.removeAttribute("src");
+      playersEl.innerHTML = "";
     }
 
     async function selectTeam(team) {
       currentTeamId = team.id;
-      document.querySelectorAll(".team-item").forEach(el => {
-        el.classList.toggle("active", el.dataset.id == team.id);
-      });
+      renderTeamList();
       teamNameEl.textContent = team.name;
-      if (team.image_url) {
-        teamImageEl.src = team.image_url;
-      } else {
-        teamImageEl.removeAttribute("src");
-      }
+      if (team.image_url) teamImageEl.src = team.image_url;
+      else teamImageEl.removeAttribute("src");
       await loadPlayers(team.id);
     }
 
@@ -1070,13 +1237,33 @@
       let sumElo = 0;
       let countElo = 0;
 
-      data.forEach(player => {
+      (data || []).forEach(player => {
         if (player.elo != null) {
           sumElo += player.elo;
           countElo++;
         }
         const card = document.createElement("div");
         card.className = "player-card";
+        card.dataset.id = player.id;
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "player-delete";
+        delBtn.title = "Spieler löschen";
+        delBtn.textContent = "🗑";
+        delBtn.addEventListener("click", async () => {
+          if (!confirm(`Spieler "${player.ingame_name}" löschen?`)) return;
+          const { error: delErr } = await supa
+            .from("players")
+            .delete()
+            .eq("id", player.id);
+          if (delErr) {
+            console.error(delErr);
+            alert("Fehler beim Löschen des Spielers: " + (delErr.message || JSON.stringify(delErr)));
+            return;
+          }
+          loadPlayers(teamId);
+        });
+
         card.innerHTML = `
           <strong>${player.ingame_name}</strong>
           <div>${player.real_name || ""}</div>
@@ -1086,6 +1273,7 @@
             Zuletzt bearbeitet: ${player.updated_at ? new Date(player.updated_at).toLocaleDateString() : "-"}
           </div>
         `;
+        card.appendChild(delBtn);
         playersEl.appendChild(card);
       });
 
