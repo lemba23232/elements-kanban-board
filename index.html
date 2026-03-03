@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Elements Management Board</title>
+  <title>Elements Kanban + Archiv</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
@@ -14,45 +14,47 @@
       --text-main: #e5e7eb;
       --text-muted: #9ca3af;
       --accent: #38bdf8;
+      --danger: #ef4444;
+      --archive: #22c55e;
     }
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 16px;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1d4ed8 0, #020617 50%);
+      background: radial-gradient(circle at top, #1d4ed8 0, #020617 55%);
       color: var(--text-main);
+    }
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
     }
     h1 {
       margin: 0 0 12px;
       font-size: 1.6rem;
       font-weight: 700;
     }
-    .app {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+
+    /* Tabs */
     .tabs {
       display: flex;
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
     }
     .tab-btn {
-      border: 1px solid var(--border);
-      background: #020617cc;
-      padding: 6px 12px;
       border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      background: #020617cc;
       color: var(--text-muted);
       cursor: pointer;
       font-size: 0.9rem;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      backdrop-filter: blur(10px);
-      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+      backdrop-filter: blur(12px);
+      transition: all 0.15s;
     }
     .tab-btn span.dot {
       width: 8px;
@@ -61,9 +63,9 @@
       background: var(--border);
     }
     .tab-btn.active {
-      color: var(--text-main);
       border-color: var(--accent);
-      background: #0b1120ee;
+      color: var(--text-main);
+      background: #020617;
       transform: translateY(-1px);
     }
     .tab-btn.active span.dot {
@@ -81,27 +83,28 @@
       border-radius: 12px;
       padding: 12px;
       border: 1px solid var(--border);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
     }
 
-    /* Boards */
+    /* Board Layout */
     .board-header {
       display: flex;
-      flex-wrap: wrap;
+      justify-content: space-between;
       gap: 8px;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
     .board-header h2 {
       margin: 0;
-      font-size: 1rem;
+      font-size: 1.0rem;
       font-weight: 600;
     }
-    .board-header .pill {
-      font-size: 0.75rem;
-      padding: 2px 8px;
+    .pill {
       border-radius: 999px;
       border: 1px solid var(--border);
+      padding: 2px 8px;
+      font-size: 0.75rem;
       color: var(--text-muted);
     }
 
@@ -110,11 +113,10 @@
       gap: 12px;
       align-items: flex-start;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
     }
-
     .column {
-      min-width: 220px;
+      min-width: 230px;
       background: var(--card-soft);
       border-radius: 10px;
       padding: 8px;
@@ -130,23 +132,23 @@
       font-size: 0.9rem;
       font-weight: 600;
     }
-    .column-pill {
+    .column-badge {
       font-size: 0.7rem;
       padding: 2px 6px;
       border-radius: 999px;
       border: 1px solid #ffffff22;
     }
-    .column.todo {
-      border-color: #ef4444aa;
-      background: linear-gradient(180deg, #450a0a, #111827);
+    .column[data-special="todo"] {
+      border-color: #ef4444cc;
+      background: linear-gradient(180deg,#450a0a,#020617);
     }
-    .column.doing {
-      border-color: #eab308aa;
-      background: linear-gradient(180deg, #422006, #111827);
+    .column[data-special="doing"] {
+      border-color: #eab308cc;
+      background: linear-gradient(180deg,#422006,#020617);
     }
-    .column.done {
-      border-color: #22c55eaa;
-      background: linear-gradient(180deg, #022c22, #111827);
+    .column[data-special="done"] {
+      border-color: #22c55ecc;
+      background: linear-gradient(180deg,#064e3b,#020617);
     }
 
     .tasks {
@@ -154,43 +156,59 @@
     }
 
     .task {
-      background: #0b1120dd;
-      border-radius: 8px;
+      background: #020617ee;
+      border-radius: 9px;
+      border: 1px solid #ffffff11;
       padding: 6px 8px;
       margin-bottom: 6px;
       cursor: grab;
-      border: 1px solid #ffffff11;
       font-size: 0.85rem;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
     }
     .task:hover {
       border-color: var(--accent);
     }
-    .task-title-row {
+    .task-header {
       display: flex;
       justify-content: space-between;
       gap: 4px;
       align-items: center;
     }
-    .task-category {
-      font-size: 0.7rem;
-      padding: 1px 6px;
-      border-radius: 999px;
-      background: #111827;
+    .task-title {
+      font-weight: 500;
+    }
+    .task-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .icon-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0;
+    }
+    .icon-btn.danger { color: var(--danger); }
+    .icon-btn.archive { color: var(--archive); }
+
+    .task-description {
+      font-size: 0.8rem;
       color: var(--text-muted);
     }
 
-    .add-form {
+    /* Forms */
+    .form-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       margin-top: 10px;
     }
-    .add-form input,
-    .add-form textarea,
-    .add-form select {
+    .form-row input,
+    .form-row textarea,
+    .form-row select {
       background: #020617;
       border-radius: 8px;
       border: 1px solid var(--border);
@@ -198,373 +216,120 @@
       color: var(--text-main);
       font-size: 0.85rem;
       flex: 1;
-      min-width: 120px;
+      min-width: 140px;
     }
-    .add-form textarea {
+    .form-row textarea {
       min-height: 60px;
       resize: vertical;
     }
-    .add-form button {
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      background: #0ea5e9;
-      color: #0b1120;
-      font-size: 0.85rem;
-      padding: 6px 12px;
-      cursor: pointer;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .add-form button:hover {
-      filter: brightness(1.1);
-    }
-
-    /* Teams */
-    .teams-layout {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .team-list {
-      flex: 0 0 220px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .team-item {
-      padding: 6px 8px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin-bottom: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .team-item.active {
-      border-color: var(--accent);
-      background: #0b1120;
-    }
-    .team-main {
-      flex: 1;
-      min-width: 260px;
-    }
-    .team-header {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .team-image {
-      width: 64px;
-      height: 64px;
-      border-radius: 12px;
-      background: #030712;
-      border: 1px solid var(--border);
-      object-fit: cover;
-    }
-    .team-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-    .players {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .player-card {
-      background: var(--card-soft);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      min-width: 160px;
-      font-size: 0.8rem;
-      cursor: grab;
-    }
-    .player-card strong {
-      font-size: 0.85rem;
-    }
-
-    /* Templates */
-    .templates-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .template-card {
-      flex: 0 0 200px;
-      background: var(--card-soft);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
-    .template-card:hover {
-      border-color: var(--accent);
-    }
-
-    /* Modal */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.8);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 50;
-    }
-    .modal-backdrop.active {
-      display: flex;
-    }
-    .modal {
-      background: #020617;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 12px;
-      max-width: 420px;
-      width: 100%;
-    }
-    .modal header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .modal header h3 {
-      margin: 0;
-      font-size: 1rem;
-    }
-    .modal-close {
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 0 6px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-    }
-    .modal-close:hover {
-      border-color: var(--border);
-      background: #020617;
-    }
-    .modal textarea {
-      width: 100%;
-      background: #020617;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      color: var(--text-main);
-      min-height: 120px;
-      font-size: 0.85rem;
-      resize: vertical;
-    }
-    .modal footer {
-      margin-top: 8px;
-      text-align: right;
-    }
-    .modal footer button {
+    .form-row button {
       border-radius: 999px;
       border: 1px solid var(--accent);
       background: #0ea5e9;
       color: #020617;
       padding: 6px 12px;
-      cursor: pointer;
       font-size: 0.85rem;
       font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .form-row button:hover {
+      filter: brightness(1.1);
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Archiv */
+    .archive-list {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+    .archive-item {
+      background: var(--card-soft);
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      font-size: 0.8rem;
+    }
+    .archive-item-title {
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    .archive-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <h1>Elements Management Board</h1>
+    <h1>Elements Aufgaben & Archiv</h1>
+
     <div class="tabs">
-      <button class="tab-btn active" data-tab="org">
-        <span class="dot"></span> Orgamanagement
+      <button class="tab-btn active" data-tab="board">
+        <span class="dot"></span> Board
       </button>
-      <button class="tab-btn" data-tab="cs2">
-        <span class="dot"></span> CS2 Management
-      </button>
-      <button class="tab-btn" data-tab="teams">
-        <span class="dot"></span> Teams
-      </button>
-      <button class="tab-btn" data-tab="templates">
-        <span class="dot"></span> Vorlagen
+      <button class="tab-btn" data-tab="archive">
+        <span class="dot"></span> Archiv
       </button>
     </div>
 
-    <!-- Orgamanagement Tab -->
-    <div id="tab-org" class="tab active">
+    <!-- Board Tab -->
+    <div id="tab-board" class="tab active">
       <div class="card">
         <div class="board-header">
-          <h2>Orgamanagement Board</h2>
-          <div class="pill">To Do = Rot · Doing = Gelb · Done = Grün</div>
-        </div>
-        <div class="board" data-board="org">
-          <div class="column todo" data-status="todo">
-            <div class="column-header">
-              <div class="column-title">To Do</div>
-              <div class="column-pill">Offen</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <div class="column doing" data-status="doing">
-            <div class="column-header">
-              <div class="column-title">Doing</div>
-              <div class="column-pill">In Arbeit</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <div class="column done" data-status="done">
-            <div class="column-header">
-              <div class="column-title">Done</div>
-              <div class="column-pill">Erledigt</div>
-            </div>
-            <div class="tasks"></div>
+          <h2>Aufgaben-Board</h2>
+          <div class="pill">
+            To Do = Rot · Doing = Gelb · Done = Grün · weitere Listen = neutral
           </div>
         </div>
 
-        <form class="add-form" data-board="org">
-          <input type="text" name="title" placeholder="Neue Aufgabe..." />
-          <input type="text" name="category" placeholder="Kategorie (z.B. Probleme)" />
-          <textarea name="description" placeholder="Beschreibung / Problem erläutern..."></textarea>
+        <div class="board" id="board"></div>
+
+        <div class="subtitle">
+          Listen-Beispiele: „Probleme“, „Ideen“, „Backlog“ … Karten kannst du zwischen den Listen hin- und herziehen.
+        </div>
+
+        <!-- Neue Liste -->
+        <form id="add-list-form" class="form-row">
+          <input type="text" id="list-title" placeholder="Neue Liste (z.B. Probleme)" />
+          <button type="submit">+ Liste hinzufügen</button>
+        </form>
+
+        <!-- Neue Aufgabe -->
+        <form id="add-task-form" class="form-row">
+          <input type="text" id="task-title" placeholder="Aufgaben-Titel (z.B. Kommunikation)" />
+          <textarea id="task-desc" placeholder="Beschreibung / Problem erläutern..."></textarea>
+          <select id="task-list-select">
+            <option value="">Liste wählen…</option>
+          </select>
           <button type="submit">+ Aufgabe hinzufügen</button>
         </form>
       </div>
     </div>
 
-    <!-- CS2 Management Tab -->
-    <div id="tab-cs2" class="tab">
+    <!-- Archiv Tab -->
+    <div id="tab-archive" class="tab">
       <div class="card">
         <div class="board-header">
-          <h2>CS2 Management Board</h2>
-          <div class="pill">Eigene Aufgaben nur für CS2</div>
+          <h2>Archiv – erledigte Aufgaben</h2>
+          <div class="pill">Hier landen Aufgaben, die du vom Board ins Archiv schickst.</div>
         </div>
-        <div class="board" data-board="cs2">
-          <div class="column todo" data-status="todo">
-            <div class="column-header">
-              <div class="column-title">To Do</div>
-              <div class="column-pill">Offen</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <div class="column doing" data-status="doing">
-            <div class="column-header">
-              <div class="column-title">Doing</div>
-              <div class="column-pill">In Arbeit</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <div class="column done" data-status="done">
-            <div class="column-header">
-              <div class="column-title">Done</div>
-              <div class="column-pill">Erledigt</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-        </div>
-
-        <form class="add-form" data-board="cs2">
-          <input type="text" name="title" placeholder="Neue CS2-Aufgabe..." />
-          <input type="text" name="category" placeholder="Kategorie (z.B. Scrims, Taktik)" />
-          <textarea name="description" placeholder="Details / Notizen..."></textarea>
-          <button type="submit">+ Aufgabe hinzufügen</button>
-        </form>
+        <div class="archive-list" id="archive-list"></div>
       </div>
-    </div>
-
-    <!-- Teams Tab -->
-    <div id="tab-teams" class="tab">
-      <div class="card">
-        <div class="board-header">
-          <h2>Teams & Spieler</h2>
-          <div class="pill">Teamkarten & Durchschnitts-Elo</div>
-        </div>
-        <div class="teams-layout">
-          <div class="team-list card">
-            <h3 style="margin-top:0;font-size:0.95rem;">Teams</h3>
-            <div id="team-list"></div>
-            <form class="add-form" id="team-form">
-              <input type="text" name="name" placeholder="Teamname" />
-              <input type="text" name="image_url" placeholder="Bild-URL (optional)" />
-              <button type="submit">+ Team</button>
-            </form>
-          </div>
-
-          <div class="team-main card">
-            <div class="team-header">
-              <img id="team-image" class="team-image" alt="Teambild" />
-              <div>
-                <div id="team-name" style="font-weight:600;">Kein Team ausgewählt</div>
-                <div class="team-meta" id="team-meta">Bitte links ein Team auswählen.</div>
-              </div>
-            </div>
-            <div class="players" id="players"></div>
-
-            <form class="add-form" id="player-form">
-              <input type="text" name="ingame_name" placeholder="Ingame-Name" />
-              <input type="text" name="real_name" placeholder="Echter Name" />
-              <input type="number" name="elo" placeholder="Elo" />
-              <input type="date" name="join_date" placeholder="Beitrittsdatum" />
-              <button type="submit">+ Spieler</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Templates Tab -->
-    <div id="tab-templates" class="tab">
-      <div class="card">
-        <div class="board-header">
-          <h2>Vorlagen</h2>
-          <div class="pill">Karten mit gespeicherten Vorlagen</div>
-        </div>
-
-        <div class="templates-grid" id="templates-grid"></div>
-
-        <form class="add-form" id="template-form">
-          <input type="text" name="title" placeholder="Vorlagenname (z.B. Wochenbericht)" />
-          <textarea name="content" placeholder="Text der Vorlage..."></textarea>
-          <button type="submit">+ Vorlage speichern</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modals -->
-  <div class="modal-backdrop" id="task-modal-backdrop">
-    <div class="modal">
-      <header>
-        <h3 id="task-modal-title">Aufgabe</h3>
-        <button class="modal-close" data-close-task>&times;</button>
-      </header>
-      <div>
-        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">
-          Kategorie: <span id="task-modal-category"></span>
-        </div>
-        <textarea id="task-modal-description"></textarea>
-      </div>
-      <footer>
-        <button id="task-modal-save">Speichern</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="template-modal-backdrop">
-    <div class="modal">
-      <header>
-        <h3 id="template-modal-title">Vorlage</h3>
-        <button class="modal-close" data-close-template>&times;</button>
-      </header>
-      <div>
-        <textarea id="template-modal-content" readonly></textarea>
-      </div>
-      <footer>
-        <button data-close-template>Schließen</button>
-      </footer>
     </div>
   </div>
 
   <script>
+    // Supabase-Konfiguration
     const SUPABASE_URL = "https://bdbgenfksxbspkchakav.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_z188lmhx8TUaNan8fQGZzw_z3zwZ87o";
     const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -577,422 +342,357 @@
         document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
         btn.classList.add("active");
         document.getElementById("tab-" + tab).classList.add("active");
+        if (tab === "archive") {
+          loadArchive();
+        } else if (tab === "board") {
+          // optional: Board neu laden
+          loadBoard();
+        }
       });
     });
 
-    /* Boards (Org & CS2) */
+    const boardEl = document.getElementById("board");
+    const listSelectEl = document.getElementById("task-list-select");
+    const addListForm = document.getElementById("add-list-form");
+    const addTaskForm = document.getElementById("add-task-form");
 
-    async function loadBoard(board) {
-      const table = board === "org" ? "org_tasks" : "cs2_tasks";
-      const boardEl = document.querySelector(`.board[data-board="${board}"]`);
-      if (!boardEl) return;
+    let listsCache = [];
+    let tasksCache = [];
 
-      const { data, error } = await supa
-        .from(table)
+    async function loadBoard() {
+      // Listen laden
+      const { data: lists, error: listError } = await supa
+        .from("lists")
+        .select("*")
+        .order("position", { ascending: true });
+
+      if (listError) {
+        console.error(listError);
+        alert("Fehler beim Laden der Listen: " + (listError.message || JSON.stringify(listError)));
+        return;
+      }
+      listsCache = lists || [];
+
+      // Aufgaben laden
+      const { data: tasks, error: taskError } = await supa
+        .from("tasks")
         .select("*")
         .order("created_at", { ascending: true });
 
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Laden der " + board + "-Aufgaben: " + (error.message || JSON.stringify(error)));
+      if (taskError) {
+        console.error(taskError);
+        alert("Fehler beim Laden der Aufgaben: " + (taskError.message || JSON.stringify(taskError)));
         return;
       }
+      tasksCache = tasks || [];
 
-      boardEl.querySelectorAll(".tasks").forEach(t => (t.innerHTML = ""));
+      renderBoard();
+      fillListSelect();
+    }
 
-      data.forEach(task => {
-        addTaskToBoard(board, task);
+    function renderBoard() {
+      boardEl.innerHTML = "";
+
+      listsCache.forEach(list => {
+        const column = document.createElement("div");
+        column.className = "column";
+        column.dataset.listId = list.id;
+
+        // Spezial-Style für To Do / Doing / Done (anhand des Titels)
+        const titleLower = (list.title || "").toLowerCase();
+        if (titleLower === "to do" || titleLower === "todo") {
+          column.dataset.special = "todo";
+        } else if (titleLower === "doing" || titleLower === "in arbeit") {
+          column.dataset.special = "doing";
+        } else if (titleLower === "done" || titleLower === "erledigt") {
+          column.dataset.special = "done";
+        }
+
+        const header = document.createElement("div");
+        header.className = "column-header";
+
+        const titleSpan = document.createElement("div");
+        titleSpan.className = "column-title";
+        titleSpan.textContent = list.title;
+
+        const count = tasksCache.filter(t => t.list_id === list.id).length;
+        const badge = document.createElement("div");
+        badge.className = "column-badge";
+        badge.textContent = count + " Karten";
+
+        header.appendChild(titleSpan);
+        header.appendChild(badge);
+
+        const tasksContainer = document.createElement("div");
+        tasksContainer.className = "tasks";
+
+        tasksContainer.addEventListener("dragover", (e) => e.preventDefault());
+        tasksContainer.addEventListener("drop", (e) => handleDropOnList(e, list.id, list.title));
+
+        column.appendChild(header);
+        column.appendChild(tasksContainer);
+        boardEl.appendChild(column);
+      });
+
+      // Karten einfügen
+      tasksCache.forEach(task => {
+        addTaskCard(task);
       });
     }
 
-    function addTaskToBoard(board, task) {
-      const boardEl = document.querySelector(`.board[data-board="${board}"]`);
-      if (!boardEl) return;
-      const col = boardEl.querySelector(`.column[data-status="${task.status}"] .tasks`);
-      if (!col) return;
+    function fillListSelect() {
+      listSelectEl.innerHTML = '<option value="">Liste wählen…</option>';
+      listsCache.forEach(list => {
+        const opt = document.createElement("option");
+        opt.value = list.id;
+        opt.textContent = list.title;
+        listSelectEl.appendChild(opt);
+      });
+    }
 
-      const div = document.createElement("div");
-      div.className = "task";
-      div.draggable = true;
-      div.dataset.id = task.id;
-      div.dataset.board = board;
-      div.dataset.table = board === "org" ? "org_tasks" : "cs2_tasks";
-      div.dataset.category = task.category || "Allgemein";
-      div.dataset.description = task.description || "";
-      div.dataset.status = task.status;
+    function addTaskCard(task) {
+      const column = boardEl.querySelector(`.column[data-list-id="${task.list_id}"]`);
+      if (!column) return;
+      const tasksContainer = column.querySelector(".tasks");
+      if (!tasksContainer) return;
 
-      const titleRow = document.createElement("div");
-      titleRow.className = "task-title-row";
+      const card = document.createElement("div");
+      card.className = "task";
+      card.draggable = true;
+      card.dataset.taskId = task.id;
+
+      const header = document.createElement("div");
+      header.className = "task-header";
 
       const titleSpan = document.createElement("span");
+      titleSpan.className = "task-title";
       titleSpan.textContent = task.title;
 
-      const catSpan = document.createElement("span");
-      catSpan.className = "task-category";
-      catSpan.textContent = task.category || "Allgemein";
+      const actions = document.createElement("div");
+      actions.className = "task-actions";
 
-      titleRow.appendChild(titleSpan);
-      titleRow.appendChild(catSpan);
-
-      div.appendChild(titleRow);
-
-      div.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", JSON.stringify({
-          id: task.id,
-          board
-        }));
+      const archiveBtn = document.createElement("button");
+      archiveBtn.className = "icon-btn archive";
+      archiveBtn.title = "In Archiv verschieben";
+      archiveBtn.textContent = "📦";
+      archiveBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        archiveTask(task);
       });
 
-      // Klick für Popup
-      div.addEventListener("click", (e) => {
-        // nicht auslösen, wenn gerade Drag startet (kleiner hack)
-        if (e.target.closest(".task-category")) return;
-        openTaskModal(div);
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "icon-btn danger";
+      deleteBtn.title = "Aufgabe löschen";
+      deleteBtn.textContent = "🗑";
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteTask(task);
       });
 
-      col.appendChild(div);
+      actions.appendChild(archiveBtn);
+      actions.appendChild(deleteBtn);
+
+      header.appendChild(titleSpan);
+      header.appendChild(actions);
+
+      const desc = document.createElement("div");
+      desc.className = "task-description";
+      desc.textContent = task.description || "";
+
+      card.appendChild(header);
+      if (task.description) {
+        card.appendChild(desc);
+      }
+
+      card.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", String(task.id));
+      });
+
+      tasksContainer.appendChild(card);
     }
 
-    // Drop-Ziele
-    document.querySelectorAll(".board").forEach(boardEl => {
-      boardEl.querySelectorAll(".column").forEach(col => {
-        col.addEventListener("dragover", (e) => e.preventDefault());
-        col.addEventListener("drop", async (e) => {
-          e.preventDefault();
-          const payload = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
-          const board = boardEl.dataset.board;
-          const newStatus = col.dataset.status;
-          const table = board === "org" ? "org_tasks" : "cs2_tasks";
-
-          const taskEl = document.querySelector(`.task[data-id="${payload.id}"][data-board="${board}"]`);
-          if (taskEl) {
-            col.querySelector(".tasks").appendChild(taskEl);
-            taskEl.dataset.status = newStatus;
-          }
-
-          const { error } = await supa
-            .from(table)
-            .update({ status: newStatus })
-            .eq("id", payload.id);
-
-          if (error) {
-            console.error(error);
-            alert("Fehler beim Aktualisieren des Status: " + (error.message || JSON.stringify(error)));
-          }
-        });
-      });
-    });
-
-    // Add-Forms
-    document.querySelectorAll(".add-form[data-board]").forEach(form => {
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const board = form.dataset.board;
-        const table = board === "org" ? "org_tasks" : "cs2_tasks";
-        const title = form.title.value.trim();
-        const category = (form.category.value || "Allgemein").trim();
-        const description = form.description.value.trim();
-
-        if (!title) return;
-
-        const { data, error } = await supa
-          .from(table)
-          .insert({ title, status: "todo", category, description })
-          .select()
-          .single();
-
-        if (error) {
-          console.error(error);
-          alert("Fehler beim Anlegen der Aufgabe: " + (error.message || JSON.stringify(error)));
-          return;
-        }
-
-        addTaskToBoard(board, data);
-        form.reset();
-      });
-    });
-
-    /* Task Modal */
-    const taskModalBackdrop = document.getElementById("task-modal-backdrop");
-    const taskModalTitle = document.getElementById("task-modal-title");
-    const taskModalCategory = document.getElementById("task-modal-category");
-    const taskModalDescription = document.getElementById("task-modal-description");
-    const taskModalSave = document.getElementById("task-modal-save");
-
-    let currentTaskElement = null;
-
-    function openTaskModal(taskEl) {
-      currentTaskElement = taskEl;
-      taskModalTitle.textContent = taskEl.textContent.trim();
-      taskModalCategory.textContent = taskEl.dataset.category;
-      taskModalDescription.value = taskEl.dataset.description || "";
-      taskModalBackdrop.classList.add("active");
-    }
-
-    function closeTaskModal() {
-      taskModalBackdrop.classList.remove("active");
-      currentTaskElement = null;
-    }
-
-    document.querySelectorAll("[data-close-task]").forEach(btn => {
-      btn.addEventListener("click", closeTaskModal);
-    });
-
-    taskModalBackdrop.addEventListener("click", (e) => {
-      if (e.target === taskModalBackdrop) closeTaskModal();
-    });
-
-    taskModalSave.addEventListener("click", async () => {
-      if (!currentTaskElement) return;
-      const id = currentTaskElement.dataset.id;
-      const board = currentTaskElement.dataset.board;
-      const table = currentTaskElement.dataset.table;
-      const newDescription = taskModalDescription.value;
+    async function handleDropOnList(e, listId, listTitle) {
+      e.preventDefault();
+      const taskId = parseInt(e.dataTransfer.getData("text/plain"), 10);
+      if (!taskId) return;
 
       const { error } = await supa
-        .from(table)
-        .update({ description: newDescription })
-        .eq("id", id);
+        .from("tasks")
+        .update({ list_id: listId })
+        .eq("id", taskId);
 
       if (error) {
         console.error(error);
-        alert("Fehler beim Speichern: " + (error.message || JSON.stringify(error)));
+        alert("Fehler beim Aktualisieren der Liste: " + (error.message || JSON.stringify(error)));
         return;
       }
 
-      currentTaskElement.dataset.description = newDescription;
-      closeTaskModal();
-    });
+      // Lokal anpassen & neu rendern
+      const task = tasksCache.find(t => t.id === taskId);
+      if (task) task.list_id = listId;
+      renderBoard();
+    }
 
-    /* Teams */
+    async function deleteTask(task) {
+      const confirmed = confirm(`Aufgabe "${task.title}" wirklich löschen?`);
+      if (!confirmed) return;
 
-    const teamListEl = document.getElementById("team-list");
-    const teamForm = document.getElementById("team-form");
-    const playerForm = document.getElementById("player-form");
-    const teamNameEl = document.getElementById("team-name");
-    const teamMetaEl = document.getElementById("team-meta");
-    const teamImageEl = document.getElementById("team-image");
-    const playersEl = document.getElementById("players");
-
-    let currentTeamId = null;
-
-    async function loadTeams() {
-      const { data, error } = await supa
-        .from("teams")
-        .select("*")
-        .order("created_at", { ascending: true });
+      const { error } = await supa
+        .from("tasks")
+        .delete()
+        .eq("id", task.id);
 
       if (error) {
         console.error(error);
-        alert("Fehler beim Laden der Teams: " + (error.message || JSON.stringify(error)));
+        alert("Fehler beim Löschen: " + (error.message || JSON.stringify(error)));
         return;
       }
 
-      teamListEl.innerHTML = "";
-      data.forEach(team => {
-        const div = document.createElement("div");
-        div.className = "team-item";
-        div.dataset.id = team.id;
-        div.innerHTML = `<span>${team.name}</span>`;
-        div.addEventListener("click", () => {
-          selectTeam(team);
+      tasksCache = tasksCache.filter(t => t.id !== task.id);
+      renderBoard();
+    }
+
+    async function archiveTask(task) {
+      const list = listsCache.find(l => l.id === task.list_id);
+      const fromListTitle = list ? list.title : null;
+
+      const { error: insertError } = await supa
+        .from("archived_tasks")
+        .insert({
+          title: task.title,
+          description: task.description,
+          from_list: fromListTitle
         });
-        teamListEl.appendChild(div);
-      });
 
-      if (data.length && !currentTeamId) {
-        selectTeam(data[0]);
-      }
-    }
-
-    async function loadPlayers(teamId) {
-      const { data, error } = await supa
-        .from("players")
-        .select("*")
-        .eq("team_id", teamId)
-        .order("updated_at", { ascending: false });
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Laden der Spieler: " + (error.message || JSON.stringify(error)));
+      if (insertError) {
+        console.error(insertError);
+        alert("Fehler beim Archivieren: " + (insertError.message || JSON.stringify(insertError)));
         return;
       }
 
-      playersEl.innerHTML = "";
-      let sumElo = 0;
-      let countElo = 0;
+      const { error: deleteError } = await supa
+        .from("tasks")
+        .delete()
+        .eq("id", task.id);
 
-      data.forEach(player => {
-        const card = document.createElement("div");
-        card.className = "player-card";
-        card.draggable = true;
-
-        const elo = player.elo ?? "-";
-        if (player.elo != null) {
-          sumElo += player.elo;
-          countElo++;
-        }
-
-        card.innerHTML = `
-          <strong>${player.ingame_name}</strong>
-          <div>${player.real_name || ""}</div>
-          <div>Elo: ${elo}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);">
-            Beitritt: ${player.join_date || "-"}<br />
-            Zuletzt bearbeitet: ${player.updated_at ? new Date(player.updated_at).toLocaleDateString() : "-"}
-          </div>
-        `;
-
-        playersEl.appendChild(card);
-      });
-
-      if (countElo > 0) {
-        const avg = Math.round(sumElo / countElo);
-        teamMetaEl.textContent = `Spieler: ${data.length} · Durchschnitts-Elo: ${avg}`;
-      } else {
-        teamMetaEl.textContent = `Spieler: ${data.length} · Keine Elo-Daten`;
+      if (deleteError) {
+        console.error(deleteError);
+        alert("Fehler beim Entfernen von Board: " + (deleteError.message || JSON.stringify(deleteError)));
+        return;
       }
+
+      tasksCache = tasksCache.filter(t => t.id !== task.id);
+      renderBoard();
     }
 
-    function selectTeam(team) {
-      currentTeamId = team.id;
-      document.querySelectorAll(".team-item").forEach(el => {
-        el.classList.toggle("active", el.dataset.id == team.id);
-      });
-      teamNameEl.textContent = team.name;
-      if (team.image_url) {
-        teamImageEl.src = team.image_url;
-      } else {
-        teamImageEl.removeAttribute("src");
-      }
-      loadPlayers(team.id);
-    }
-
-    teamForm.addEventListener("submit", async (e) => {
+    /* Form: neue Liste */
+    addListForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const name = teamForm.name.value.trim();
-      const image_url = teamForm.image_url.value.trim() || null;
-      if (!name) return;
+      const titleInput = document.getElementById("list-title");
+      const title = titleInput.value.trim();
+      if (!title) return;
+
+      const maxPos = listsCache.reduce((max, l) => Math.max(max, l.position || 0), 0);
+      const newPosition = maxPos + 1;
 
       const { data, error } = await supa
-        .from("teams")
-        .insert({ name, image_url })
+        .from("lists")
+        .insert({ title, position: newPosition })
         .select()
         .single();
 
       if (error) {
         console.error(error);
-        alert("Fehler beim Anlegen des Teams: " + (error.message || JSON.stringify(error)));
+        alert("Fehler beim Anlegen der Liste: " + (error.message || JSON.stringify(error)));
         return;
       }
 
-      teamForm.reset();
-      await loadTeams();
-      selectTeam(data);
+      listsCache.push(data);
+      titleInput.value = "";
+      renderBoard();
+      fillListSelect();
     });
 
-    playerForm.addEventListener("submit", async (e) => {
+    /* Form: neue Aufgabe */
+    addTaskForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      if (!currentTeamId) {
-        alert("Bitte zuerst ein Team auswählen.");
+      const titleInput = document.getElementById("task-title");
+      const descInput = document.getElementById("task-desc");
+      const listSelect = document.getElementById("task-list-select");
+
+      const title = titleInput.value.trim();
+      const description = descInput.value.trim();
+      const listId = parseInt(listSelect.value, 10);
+
+      if (!title || !listId) {
+        alert("Bitte Titel und Liste auswählen.");
         return;
       }
-      const ingame_name = playerForm.ingame_name.value.trim();
-      const real_name = playerForm.real_name.value.trim() || null;
-      const eloVal = playerForm.elo.value.trim();
-      const elo = eloVal ? parseInt(eloVal, 10) : null;
-      const join_date = playerForm.join_date.value || null;
 
-      if (!ingame_name) return;
-
-      const { error } = await supa
-        .from("players")
-        .insert({ team_id: currentTeamId, ingame_name, real_name, elo, join_date });
+      const { data, error } = await supa
+        .from("tasks")
+        .insert({ title, description, list_id: listId })
+        .select()
+        .single();
 
       if (error) {
         console.error(error);
-        alert("Fehler beim Anlegen des Spielers: " + (error.message || JSON.stringify(error)));
+        alert("Fehler beim Anlegen der Aufgabe: " + (error.message || JSON.stringify(error)));
         return;
       }
 
-      playerForm.reset();
-      loadPlayers(currentTeamId);
+      tasksCache.push(data);
+      titleInput.value = "";
+      descInput.value = "";
+      listSelect.value = "";
+      renderBoard();
     });
 
-    /* Templates */
+    /* Archiv laden */
+    const archiveListEl = document.getElementById("archive-list");
 
-    const templatesGrid = document.getElementById("templates-grid");
-    const templateForm = document.getElementById("template-form");
-    const templateModalBackdrop = document.getElementById("template-modal-backdrop");
-    const templateModalTitle = document.getElementById("template-modal-title");
-    const templateModalContent = document.getElementById("template-modal-content");
-
-    async function loadTemplates() {
+    async function loadArchive() {
       const { data, error } = await supa
-        .from("templates")
+        .from("archived_tasks")
         .select("*")
-        .order("created_at", { ascending: true });
+        .order("archived_at", { ascending: false });
 
       if (error) {
         console.error(error);
-        alert("Fehler beim Laden der Vorlagen: " + (error.message || JSON.stringify(error)));
+        alert("Fehler beim Laden des Archivs: " + (error.message || JSON.stringify(error)));
         return;
       }
 
-      templatesGrid.innerHTML = "";
-      data.forEach(tpl => {
-        const card = document.createElement("div");
-        card.className = "template-card";
-        card.textContent = tpl.title;
-        card.addEventListener("click", () => {
-          openTemplateModal(tpl);
-        });
-        templatesGrid.appendChild(card);
+      archiveListEl.innerHTML = "";
+      (data || []).forEach(item => {
+        const div = document.createElement("div");
+        div.className = "archive-item";
+
+        const title = document.createElement("div");
+        title.className = "archive-item-title";
+        title.textContent = item.title;
+
+        const meta = document.createElement("div");
+        meta.className = "archive-meta";
+        const dateStr = item.archived_at ? new Date(item.archived_at).toLocaleString() : "-";
+        meta.textContent = `Aus Liste: ${item.from_list || "-"} · Archiviert: ${dateStr}`;
+
+        const desc = document.createElement("div");
+        desc.className = "task-description";
+        desc.textContent = item.description || "";
+
+        div.appendChild(title);
+        div.appendChild(meta);
+        if (item.description) {
+          div.appendChild(desc);
+        }
+
+        archiveListEl.appendChild(div);
       });
     }
 
-    templateForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const title = templateForm.title.value.trim();
-      const content = templateForm.content.value.trim();
-      if (!title) return;
-
-      const { error } = await supa
-        .from("templates")
-        .insert({ title, content });
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Speichern der Vorlage: " + (error.message || JSON.stringify(error)));
-        return;
-      }
-
-      templateForm.reset();
-      loadTemplates();
-    });
-
-    function openTemplateModal(tpl) {
-      templateModalTitle.textContent = tpl.title;
-      templateModalContent.value = tpl.content || "";
-      templateModalBackdrop.classList.add("active");
-    }
-
-    function closeTemplateModal() {
-      templateModalBackdrop.classList.remove("active");
-    }
-
-    document.querySelectorAll("[data-close-template]").forEach(btn => {
-      btn.addEventListener("click", closeTemplateModal);
-    });
-    templateModalBackdrop.addEventListener("click", (e) => {
-      if (e.target === templateModalBackdrop) closeTemplateModal();
-    });
-
-    /* Initial Load */
-    loadBoard("org");
-    loadBoard("cs2");
-    loadTeams();
-    loadTemplates();
+    // Initial
+    loadBoard();
   </script>
 </body>
 </html>
