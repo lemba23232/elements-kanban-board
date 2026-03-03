@@ -23,7 +23,7 @@
       margin: 0;
       padding: 24px;
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      /* hier: Grün statt Blau */
+      /* Grün statt Blau */
       background: radial-gradient(circle at top, #16a34a 0, #020617 55%);
       color: var(--text);
       font-size: 16px;
@@ -112,7 +112,7 @@
       align-items: flex-start;
       overflow-x: auto;
       padding-bottom: 10px;
-      min-height: 70vh; /* mehr Höhe nutzen */
+      min-height: 70vh;
     }
     .column {
       min-width: 280px;
@@ -180,8 +180,8 @@
       background: #7f1d1d;
       color: #fee2e2;
       cursor: pointer;
-      font-size: 0.75rem;
-      padding: 2px 8px;
+      font-size: 0.9rem;
+      padding: 1px 7px;
       font-weight: 600;
     }
     .list-delete-btn:hover {
@@ -811,7 +811,7 @@
         const addBtn = document.createElement("button");
         addBtn.className = "column-add";
         addBtn.title = "Karte in dieser Liste anlegen";
-        addBtn.textContent = "+ Karte";
+        addBtn.textContent = "+";   // <--- nur "+" statt "+ Karte"
         addBtn.addEventListener("click", async (e) => {
           e.stopPropagation();
           const title = prompt(`Titel der Karte in "${status}":`);
@@ -837,7 +837,7 @@
           const delListBtn = document.createElement("button");
           delListBtn.className = "list-delete-btn";
           delListBtn.title = `Liste "${status}" inkl. Karten löschen`;
-          delListBtn.textContent = "Liste löschen";
+          delListBtn.textContent = "🗑";     // <--- nur Mülleimer-Symbol
           delListBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             deleteCustomList(board, status);
