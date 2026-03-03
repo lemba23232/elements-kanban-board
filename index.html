@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Elements Kanban Board</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Kleine, einfache Styles -->
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f3f4f6;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .board {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .column {
+      background: white;
+      border-radius: 8px;
+      padding: 10px;
+      flex: 1;
+      min-height: 200px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .column h2 {
+      margin-top: 0;
+      font-size: 1rem;
+    }
+    .task {
+      background: #e5e7eb;
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 8px;
+      cursor: grab;
+    }
+    .add-form {
+      margin-top: 10px;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .add-form input {
+      flex: 1;
+      padding: 6px 8px;
+    }
+    .add-form button {
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+  </style>
+  <!-- Supabase JS SDK -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h1>Kanban Board für Elements</h1>
+
+  <div class="board">
+    <div class="column" data-status="todo">
+      <h2>To Do</h2>
+      <div class="tasks"></div>
+    </div>
+    <div class="column" data-status="doing">
+      <h2>Doing</h2>
+      <div class="tasks"></div>
+    </div>
+    <div class="column" data-status="done">
+      <h2>Done</h2>
+      <div class="tasks"></div>
+    </div>
+  </div>
+
+  <form class="add-form">
+    <input type="text" id="new-title" placeholder="Neue Aufgabe..." />
+    <button type="submit">+ Hinzufügen</button>
+  </form>
+
+  <script>
+    // ⬇⬇⬇ HIER gleich deine Supabase-Daten einsetzen ⬇⬇⬇
+    const SUPABASE_URL = "HIER_URL_EINFÜGEN";
+    const SUPABASE_ANON_KEY = "HIER_ANON_KEY_EINFÜGEN";
+
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function loadTasks() {
+      const { data, error } = await client
+        .from("tasks")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        alert("Fehler beim Laden der Aufgaben");
+        return;
+      }
+
+      // Alle Task-Container leeren
+      document.querySelectorAll(".column .tasks").forEach(el => el.innerHTML = "");
+
+      for (const task of data) {
+        addTaskToDOM(task);
+      }
+    }
+
+    function addTaskToDOM(task) {
+      const column = document.querySelector(`.column[data-status="${task.status}"] .tasks`);
+      if (!column) return;
+
+      const div = document.createElement("div");
+      div.className = "task";
+      div.draggable = true;
+      div.dataset.id = task.id;
+      div.textContent = task.title;
+
+      // Drag Events
+      div.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", task.id);
+      });
+
+      column.appendChild(div);
+    }
+
+    // Spalten als Drop-Ziele
+    document.querySelectorAll(".column").forEach(col => {
+      col.addEventListener("dragover", (e) => {
+        e.preventDefault();
+      });
+      col.addEventListener("drop", async (e) => {
+        e.preventDefault();
+        const taskId = e.dataTransfer.getData("text/plain");
+        const newStatus = col.dataset.status;
+
+        // Visuell sofort verschieben:
+        const taskEl = document.querySelector(`.task[data-id="${taskId}"]`);
+        col.querySelector(".tasks").appendChild(taskEl);
+
+        // In Supabase updaten:
+        const { error } = await client
+          .from("tasks")
+          .update({ status: newStatus })
+          .eq("id", taskId);
+
+        if (error) {
+          console.error(error);
+          alert("Fehler beim Aktualisieren des Status");
+        }
+      });
+    });
+
+    // Neue Aufgabe hinzufügen
+    const form = document.querySelector(".add-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = document.getElementById("new-title");
+      const title = input.value.trim();
+      if (!title) return;
+
+      const { data, error } = await client
+        .from("tasks")
+        .insert({ title, status: "todo" })
+        .select()
+        .single();
+
+      if (error) {
+        console.error(error);
+        alert("Fehler beim Anlegen der Aufgabe");
+        return;
+      }
+
+      addTaskToDOM(data);
+      input.value = "";
+    });
+
+    // Beim Laden der Seite
+    loadTasks();
+  </script>
+</body>
+</html>
