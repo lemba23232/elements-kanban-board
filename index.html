@@ -263,34 +263,15 @@
     }
     .form-row button:hover { filter:brightness(1.08); }
 
-    .extra-form {
+    .new-list-form {
       margin-top: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
     }
-    .extra-form input,
-    .extra-form textarea {
-      background:#020617;
-      border-radius:8px;
-      border:1px solid var(--border);
-      padding:4px 6px;
-      color:var(--text);
-      font-size:.78rem;
+    .new-list-form input,
+    .new-list-form textarea {
+      font-size: 0.8rem;
     }
-    .extra-form textarea {
-      min-height:50px;
-      resize:vertical;
-    }
-    .extra-form button {
-      border-radius:999px;
-      border:1px solid var(--accent);
-      background:#0ea5e9;
-      color:#020617;
-      font-size:.78rem;
-      padding:4px 8px;
-      cursor:pointer;
-      align-self:flex-end;
+    .new-list-form button {
+      font-size: 0.8rem;
     }
 
     /* Teams */
@@ -503,48 +484,22 @@
       <div class="card">
         <div class="header">
           <h2>Orgamanagement Board</h2>
-          <div class="pill">To Do = Rot · Doing = Gelb · Done = Grün + Extra-Spalte</div>
+          <div class="pill">To Do = Rot · Doing = Gelb · Done = Grün · eigene Spalten möglich</div>
         </div>
 
         <div class="category-filter" data-board="org"></div>
 
-        <div class="board" data-board="org">
-          <div class="column todo" data-status="todo">
-            <div class="column-header">
-              <div class="column-title">To Do</div>
-              <div class="column-pill">Offen</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <div class="column doing" data-status="doing">
-            <div class="column-header">
-              <div class="column-title">Doing</div>
-              <div class="column-pill">In Arbeit</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <div class="column done" data-status="done">
-            <div class="column-header">
-              <div class="column-title">Done</div>
-              <div class="column-pill">Erledigt</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <!-- Extra-Spalte rechts von Done -->
-          <div class="column extra" data-status="extra-org">
-            <div class="column-header">
-              <div class="column-title">Extra</div>
-              <div class="column-pill">Benutzerdefiniert</div>
-            </div>
-            <div class="tasks"></div>
-            <form class="extra-form" data-board="org">
-              <input type="text" name="title" placeholder="Titel der Karte..." />
-              <textarea name="description" placeholder="Beschreibung..."></textarea>
-              <button type="submit">+ Karte</button>
-            </form>
-          </div>
-        </div>
+        <div class="board" data-board="org"></div>
 
+        <!-- Neue benutzerdefinierte Liste + erste Karte -->
+        <form class="form-row new-list-form" data-board="org">
+          <input type="text" name="list_name" placeholder="Neue Liste / Blase (z.B. Probleme)" />
+          <input type="text" name="title" placeholder="Titel der ersten Karte (z.B. Kommunikation)" />
+          <textarea name="description" placeholder="Beschreibung der Karte..."></textarea>
+          <button type="submit">+ Liste & Karte</button>
+        </form>
+
+        <!-- Normale Aufgaben in To Do -->
         <form class="form-row" data-board="org">
           <input type="text" name="title" placeholder="Neue Aufgabe..." />
           <input type="text" name="category" placeholder="Kategorie (z.B. Probleme)" />
@@ -559,48 +514,22 @@
       <div class="card">
         <div class="header">
           <h2>CS2 Management Board</h2>
-          <div class="pill">Eigene Aufgaben nur für CS2</div>
+          <div class="pill">Eigene Aufgaben nur für CS2 · eigene Spalten möglich</div>
         </div>
 
         <div class="category-filter" data-board="cs2"></div>
 
-        <div class="board" data-board="cs2">
-          <div class="column todo" data-status="todo">
-            <div class="column-header">
-              <div class="column-title">To Do</div>
-              <div class="column-pill">Offen</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <div class="column doing" data-status="doing">
-            <div class="column-header">
-              <div class="column-title">Doing</div>
-              <div class="column-pill">In Arbeit</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <div class="column done" data-status="done">
-            <div class="column-header">
-              <div class="column-title">Done</div>
-              <div class="column-pill">Erledigt</div>
-            </div>
-            <div class="tasks"></div>
-          </div>
-          <!-- Extra-Spalte -->
-          <div class="column extra" data-status="extra-cs2">
-            <div class="column-header">
-              <div class="column-title">Extra</div>
-              <div class="column-pill">Benutzerdefiniert</div>
-            </div>
-            <div class="tasks"></div>
-            <form class="extra-form" data-board="cs2">
-              <input type="text" name="title" placeholder="Titel der Karte..." />
-              <textarea name="description" placeholder="Beschreibung..."></textarea>
-              <button type="submit">+ Karte</button>
-            </form>
-          </div>
-        </div>
+        <div class="board" data-board="cs2"></div>
 
+        <!-- Neue benutzerdefinierte Liste + Karte -->
+        <form class="form-row new-list-form" data-board="cs2">
+          <input type="text" name="list_name" placeholder="Neue Liste / Blase (z.B. Probleme)" />
+          <input type="text" name="title" placeholder="Titel der ersten Karte..." />
+          <textarea name="description" placeholder="Beschreibung der Karte..."></textarea>
+          <button type="submit">+ Liste & Karte</button>
+        </form>
+
+        <!-- Normale Aufgaben in To Do -->
         <form class="form-row" data-board="cs2">
           <input type="text" name="title" placeholder="Neue CS2-Aufgabe..." />
           <input type="text" name="category" placeholder="Kategorie (z.B. Scrims, Taktik)" />
@@ -615,7 +544,7 @@
       <div class="card">
         <div class="header">
           <h2>Teams & Spieler</h2>
-          <div class="pill">Teambild · Spieler · Ø Elo · Löschbar</div>
+          <div class="pill">Teambild · Spieler · Ø Elo · löschbar</div>
         </div>
         <div class="teams-layout">
           <div class="teams-left card">
@@ -730,6 +659,71 @@
 
     const categoryFilterState = { org: "ALL", cs2: "ALL" };
 
+    function renderBoard(board, tasks) {
+      const boardEl = document.querySelector(`.board[data-board="${board}"]`);
+      boardEl.innerHTML = "";
+
+      const coreStatuses = ["todo","doing","done"];
+      const labelMap = {
+        todo: "To Do",
+        doing: "Doing",
+        done: "Done"
+      };
+      const pillMap = {
+        todo: "Offen",
+        doing: "In Arbeit",
+        done: "Erledigt"
+      };
+
+      const allStatuses = new Set(coreStatuses);
+      tasks.forEach(t => {
+        if (t.status && !coreStatuses.includes(t.status)) {
+          allStatuses.add(t.status);
+        }
+      });
+
+      const extras = [...allStatuses].filter(s => !coreStatuses.includes(s)).sort();
+      const ordered = [...coreStatuses, ...extras];
+
+      ordered.forEach(status => {
+        const col = document.createElement("div");
+        col.className = "column";
+        if (status === "todo") col.classList.add("todo");
+        else if (status === "doing") col.classList.add("doing");
+        else if (status === "done") col.classList.add("done");
+        else col.classList.add("extra");
+
+        col.dataset.status = status;
+
+        const head = document.createElement("div");
+        head.className = "column-header";
+
+        const title = document.createElement("div");
+        title.className = "column-title";
+        if (labelMap[status]) title.textContent = labelMap[status];
+        else title.textContent = status;
+
+        const pill = document.createElement("div");
+        pill.className = "column-pill";
+        if (pillMap[status]) pill.textContent = pillMap[status];
+        else pill.textContent = "Benutzerdefiniert";
+
+        head.appendChild(title);
+        head.appendChild(pill);
+
+        const tasksContainer = document.createElement("div");
+        tasksContainer.className = "tasks";
+
+        col.appendChild(head);
+        col.appendChild(tasksContainer);
+        boardEl.appendChild(col);
+      });
+
+      tasks.forEach(task => addTaskToBoard(board, task));
+
+      attachBoardDnD();
+    }
+
     async function loadBoard(board) {
       const table = board === "org" ? "org_tasks" : "cs2_tasks";
       const boardEl = document.querySelector(`.board[data-board="${board}"]`);
@@ -746,11 +740,13 @@
         return;
       }
 
+      const allTasks = data || [];
+
       // Kategorien sammeln
       const categories = new Set();
-      for (const t of data) {
+      allTasks.forEach(t => {
         if (t.category && t.category.trim() !== "") categories.add(t.category.trim());
-      }
+      });
 
       // Filter-Pills
       filterEl.innerHTML = "";
@@ -774,16 +770,13 @@
         filterEl.appendChild(btn);
       });
 
-      // Board leeren
-      boardEl.querySelectorAll(".column .tasks").forEach(el => el.innerHTML = "");
-
-      // Aufgaben einfügen
-      data.forEach(task => {
-        if (categoryFilterState[board] !== "ALL") {
-          if (!task.category || task.category.trim() !== categoryFilterState[board]) return;
-        }
-        addTaskToBoard(board, task);
+      const filteredTasks = allTasks.filter(t => {
+        const filter = categoryFilterState[board];
+        if (filter === "ALL") return true;
+        return (t.category && t.category.trim() === filter);
       });
+
+      renderBoard(board, filteredTasks);
     }
 
     function addTaskToBoard(board, task) {
@@ -867,39 +860,41 @@
       col.appendChild(el);
     }
 
-    // Drag & Drop
-    document.querySelectorAll(".board").forEach(boardEl => {
-      boardEl.querySelectorAll(".column").forEach(col => {
-        col.addEventListener("dragover", e => e.preventDefault());
-        col.addEventListener("drop", async (e) => {
-          e.preventDefault();
-          const payload = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
-          const board = boardEl.dataset.board;
-          const newStatus = col.dataset.status;
-          const table = board === "org" ? "org_tasks" : "cs2_tasks";
+    function attachBoardDnD() {
+      document.querySelectorAll(".board").forEach(boardEl => {
+        boardEl.querySelectorAll(".column").forEach(col => {
+          col.addEventListener("dragover", e => e.preventDefault());
+          col.addEventListener("drop", async (e) => {
+            e.preventDefault();
+            const payload = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
+            const board = boardEl.dataset.board;
+            const newStatus = col.dataset.status;
+            const table = board === "org" ? "org_tasks" : "cs2_tasks";
 
-          const taskEl = document.querySelector(`.task[data-id="${payload.id}"][data-board="${board}"]`);
-          if (taskEl) {
-            col.querySelector(".tasks").appendChild(taskEl);
-            taskEl.dataset.status = newStatus;
-          }
+            const taskEl = document.querySelector(`.task[data-id="${payload.id}"][data-board="${board}"]`);
+            if (taskEl) {
+              col.querySelector(".tasks").appendChild(taskEl);
+              taskEl.dataset.status = newStatus;
+            }
 
-          const { error } = await supa
-            .from(table)
-            .update({ status: newStatus })
-            .eq("id", payload.id);
+            const { error } = await supa
+              .from(table)
+              .update({ status: newStatus })
+              .eq("id", payload.id);
 
-          if (error) {
-            console.error(error);
-            alert("Fehler beim Aktualisieren des Status: " + (error.message || JSON.stringify(error)));
-          }
+            if (error) {
+              console.error(error);
+              alert("Fehler beim Aktualisieren des Status: " + (error.message || JSON.stringify(error)));
+            }
+          });
         });
       });
-    });
+    }
 
-    // Neue Aufgaben in ToDo
+    // Neue Aufgaben (To Do)
     document.querySelectorAll("form.form-row[data-board]").forEach(form => {
       form.addEventListener("submit", async (e) => {
+        if (form.classList.contains("new-list-form")) return; // die andere Logik
         e.preventDefault();
         const board = form.dataset.board;
         const table = board === "org" ? "org_tasks" : "cs2_tasks";
@@ -923,24 +918,27 @@
       });
     });
 
-    // Extra-Spalten-Karten
-    document.querySelectorAll("form.extra-form").forEach(form => {
+    // Neue benutzerdefinierte Liste + erste Karte
+    document.querySelectorAll("form.new-list-form").forEach(form => {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const board = form.dataset.board;
         const table = board === "org" ? "org_tasks" : "cs2_tasks";
+        const listName = form.list_name.value.trim();
         const title = form.title.value.trim();
         const description = form.description.value.trim();
-        if (!title) return;
-        const status = board === "org" ? "extra-org" : "extra-cs2";
+        if (!listName || !title) return;
+
+        const status = listName; // Spaltenname = status
+        const category = listName; // damit die Kategorie-Bubble gleich ist
 
         const { error } = await supa
           .from(table)
-          .insert({ title, status, category: "Extra", description });
+          .insert({ title, status, category, description });
 
         if (error) {
           console.error(error);
-          alert("Fehler beim Anlegen der Extra-Karte: " + (error.message || JSON.stringify(error)));
+          alert("Fehler beim Anlegen von Liste & Karte: " + (error.message || JSON.stringify(error)));
           return;
         }
 
@@ -962,7 +960,7 @@
       taskModalTitle.textContent = taskEl.dataset.title;
       const cat = taskEl.dataset.category || "Allgemein";
       const status = taskEl.dataset.status;
-      taskModalInfo.textContent = `Kategorie: ${cat} · Status: ${status}`;
+      taskModalInfo.textContent = `Liste: ${status} · Kategorie: ${cat}`;
       taskModalDescription.value = taskEl.dataset.description || "";
       taskModalBackdrop.classList.add("active");
     }
@@ -1180,9 +1178,7 @@
         deleteBtn.addEventListener("click", async (e) => {
           e.stopPropagation();
           if (!confirm(`Team "${team.name}" inkl. Spieler löschen?`)) return;
-          // erst Spieler löschen
           await supa.from("players").delete().eq("team_id", team.id);
-          // dann Team löschen
           const { error } = await supa.from("teams").delete().eq("id", team.id);
           if (error) {
             console.error(error);
