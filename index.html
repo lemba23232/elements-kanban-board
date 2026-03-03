@@ -785,7 +785,7 @@
           if (!title) return;
           const description = prompt("Beschreibung (optional):") || "";
           const table = board === "org" ? "org_tasks" : "cs2_tasks";
-          const category = status; // passt gut zu deinem Usecase (Probleme etc.)
+          const category = status; // Kategorie = Listenname
           const { error } = await supa
             .from(table)
             .insert({ title, status, category, description });
@@ -800,6 +800,19 @@
         head.appendChild(title);
         head.appendChild(pill);
         head.appendChild(addBtn);
+
+        // Lösch-Button nur für benutzerdefinierte Listen (nicht für ToDo/Doing/Done)
+        if (!coreStatuses.includes(status)) {
+          const delListBtn = document.createElement("button");
+          delListBtn.className = "icon-btn danger";
+          delListBtn.title = `Liste "${status}" inkl. Karten löschen`;
+          delListBtn.textContent = "🗑";
+          delListBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            deleteCustomList(board, status);
+          });
+          head.appendChild(delListBtn);
+        }
 
         const tasksContainer = document.createElement("div");
         tasksContainer.className = "tasks";
@@ -1035,6 +1048,40 @@
     });
 
     /* Löschen & Archivieren */
+
+    async function deleteCustomList(board, listName) {
+      if (!confirm(`Liste "${listName}" und alle Karten darin löschen?`)) return;
+
+      const table = board === "org" ? "org_tasks" : "cs2_tasks";
+
+      // 1. Alle Karten in dieser Liste löschen
+      const { error: delTasksErr } = await supa
+        .from(table)
+        .delete()
+        .eq("status", listName);
+
+      if (delTasksErr) {
+        console.error(delTasksErr);
+        alert("Fehler beim Löschen der Karten: " + (delTasksErr.message || JSON.stringify(delTasksErr)));
+        return;
+      }
+
+      // 2. Die Liste selbst aus custom_lists entfernen
+      const { error: delListErr } = await supa
+        .from("custom_lists")
+        .delete()
+        .eq("board", board)
+        .eq("name", listName);
+
+      if (delListErr) {
+        console.error(delListErr);
+        alert("Fehler beim Löschen der Liste: " + (delListErr.message || JSON.stringify(delListErr)));
+        return;
+      }
+
+      // 3. Board neu laden
+      loadBoard(board);
+    }
 
     async function deleteTask(taskEl) {
       const id = taskEl.dataset.id;
