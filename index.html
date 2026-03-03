@@ -9,7 +9,7 @@
     :root {
       --bg: #020617;
       --card: #0f172a;
-      --soft: #1f2937;
+      --soft: #0b1120;
       --border: #1f2937;
       --text: #e5e7eb;
       --muted: #9ca3af;
@@ -21,34 +21,37 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 16px;
+      padding: 24px;
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background: radial-gradient(circle at top, #1d4ed8 0, #020617 55%);
+      /* hier: Grün statt Blau */
+      background: radial-gradient(circle at top, #16a34a 0, #020617 55%);
       color: var(--text);
+      font-size: 16px;
     }
     .app {
-      max-width: 1200px;
+      max-width: 1600px;
+      width: 100%;
       margin: 0 auto;
     }
     h1 {
-      margin: 0 0 12px;
-      font-size: 1.6rem;
+      margin: 0 0 16px;
+      font-size: 1.9rem;
       font-weight: 700;
     }
     .tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
+      gap: 10px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
     .tab-btn {
       border-radius: 999px;
       border: 1px solid var(--border);
-      padding: 6px 12px;
+      padding: 8px 16px;
       background: #020617cc;
       color: var(--muted);
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -56,8 +59,8 @@
       transition: all .15s;
     }
     .tab-btn span.dot {
-      width: 8px;
-      height: 8px;
+      width: 9px;
+      height: 9px;
       border-radius: 999px;
       background: var(--border);
     }
@@ -74,46 +77,48 @@
     .tab.active { display: block; }
 
     .card {
-      background: linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.95));
-      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
+      border-radius: 16px;
       border: 1px solid var(--border);
-      padding: 12px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.6);
+      padding: 16px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.75);
     }
     .header {
       display: flex;
       justify-content: space-between;
-      gap: 8px;
+      gap: 12px;
       align-items: center;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
     }
     .header h2 {
       margin: 0;
-      font-size: 1.0rem;
+      font-size: 1.15rem;
       font-weight: 600;
     }
     .pill {
       border-radius: 999px;
       border: 1px solid var(--border);
-      padding: 2px 8px;
-      font-size: 0.75rem;
+      padding: 4px 10px;
+      font-size: 0.8rem;
       color: var(--muted);
+      background: #020617aa;
     }
 
     /* Board */
     .board {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       align-items: flex-start;
       overflow-x: auto;
-      padding-bottom: 6px;
+      padding-bottom: 10px;
+      min-height: 70vh; /* mehr Höhe nutzen */
     }
     .column {
-      min-width: 230px;
+      min-width: 280px;
       background: var(--soft);
-      border-radius: 10px;
-      padding: 8px;
+      border-radius: 14px;
+      padding: 10px;
       border: 1px solid var(--border);
     }
     .column.todo {
@@ -136,40 +141,64 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
-      gap: 6px;
+      margin-bottom: 8px;
+      gap: 8px;
     }
     .column-title {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 600;
     }
     .column-pill {
-      font-size: 0.7rem;
-      padding: 2px 6px;
+      font-size: 0.75rem;
+      padding: 2px 8px;
       border-radius: 999px;
       border: 1px solid #ffffff33;
       color: var(--muted);
+      white-space: nowrap;
+    }
+    .column-header-right {
+      display: flex;
+      gap: 4px;
+      align-items: center;
     }
     .column-add {
-      border: none;
-      background: transparent;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: #0ea5e9;
+      color: #020617;
       cursor: pointer;
-      color: var(--accent);
-      font-size: 0.9rem;
-      padding: 0 4px;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+    .column-add:hover {
+      filter: brightness(1.05);
+    }
+    .list-delete-btn {
+      border-radius: 999px;
+      border: 1px solid var(--danger);
+      background: #7f1d1d;
+      color: #fee2e2;
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+    .list-delete-btn:hover {
+      filter: brightness(1.05);
     }
     .tasks {
-      min-height: 40px;
+      min-height: 60px;
     }
 
     .task {
-      background: #020617ee;
-      border-radius: 9px;
-      border: 1px solid #ffffff14;
-      padding: 6px 8px;
-      margin-bottom: 6px;
+      background: #020617f0;
+      border-radius: 10px;
+      border: 1px solid #ffffff1a;
+      padding: 8px 9px;
+      margin-bottom: 8px;
       cursor: grab;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -185,7 +214,7 @@
     }
     .task-title {
       font-weight: 600;
-      font-size: 0.88rem;
+      font-size: 0.95rem;
     }
     .task-actions {
       display: flex;
@@ -196,14 +225,14 @@
       background: transparent;
       cursor: pointer;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       padding: 0;
     }
     .icon-btn.danger { color: var(--danger); }
     .icon-btn.archive { color: var(--ok); }
     .task-category {
-      font-size: 0.7rem;
-      padding: 1px 6px;
+      font-size: 0.75rem;
+      padding: 2px 7px;
       border-radius: 999px;
       background: #111827;
       color: var(--muted);
@@ -221,11 +250,11 @@
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .cat-pill {
-      font-size: 0.75rem;
-      padding: 3px 8px;
+      font-size: 0.8rem;
+      padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
       background: #020617dd;
@@ -241,19 +270,19 @@
     .form-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
+      gap: 8px;
+      margin-top: 12px;
     }
     .form-row input,
     .form-row textarea {
       background:#020617;
-      border-radius:8px;
+      border-radius:10px;
       border:1px solid var(--border);
-      padding:6px 8px;
+      padding:8px 10px;
       color:var(--text);
       font-size:.85rem;
       flex:1;
-      min-width:120px;
+      min-width:140px;
     }
     .form-row textarea {
       min-height:60px;
@@ -264,8 +293,8 @@
       border:1px solid var(--accent);
       background:#0ea5e9;
       color:#020617;
-      font-size:.85rem;
-      padding:6px 12px;
+      font-size:.9rem;
+      padding:8px 14px;
       cursor:pointer;
       font-weight:600;
       white-space:nowrap;
@@ -273,35 +302,37 @@
     .form-row button:hover { filter:brightness(1.08); }
 
     .new-list-form input {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
     .new-list-form button {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
 
     /* Teams */
     .teams-layout {
       display:flex;
-      gap:12px;
+      gap:16px;
       flex-wrap:wrap;
+      min-height: 60vh;
     }
     .teams-left {
-      flex:0 0 230px;
+      flex:0 0 260px;
     }
     .teams-right {
       flex:1;
-      min-width:260px;
+      min-width:300px;
     }
     .team-item {
-      padding:6px 8px;
-      border-radius:9px;
+      padding:8px 10px;
+      border-radius:10px;
       border:1px solid var(--border);
-      margin-bottom:6px;
+      margin-bottom:8px;
       cursor:pointer;
       display:flex;
       justify-content:space-between;
       align-items:center;
       background:#020617aa;
+      font-size:0.9rem;
     }
     .team-label {
       display:flex;
@@ -314,38 +345,38 @@
     }
     .team-head {
       display:flex;
-      gap:8px;
+      gap:10px;
       align-items:center;
-      margin-bottom:6px;
+      margin-bottom:10px;
     }
     .team-image {
-      width:60px;
-      height:60px;
-      border-radius:12px;
+      width:72px;
+      height:72px;
+      border-radius:14px;
       object-fit:cover;
       background:#020617;
       border:1px solid var(--border);
     }
     .team-meta {
-      font-size:.8rem;
+      font-size:.85rem;
       color:var(--muted);
     }
     .players {
       display:flex;
       flex-wrap:wrap;
-      gap:8px;
+      gap:10px;
     }
     .player-card {
       background:var(--soft);
-      border-radius:9px;
+      border-radius:10px;
       border:1px solid var(--border);
-      padding:6px 8px;
-      min-width:170px;
-      font-size:.8rem;
+      padding:8px 10px;
+      min-width:180px;
+      font-size:.85rem;
       position:relative;
     }
     .player-card strong {
-      font-size:.88rem;
+      font-size:.95rem;
     }
     .player-delete {
       position:absolute;
@@ -355,23 +386,23 @@
       background:transparent;
       color:var(--danger);
       cursor:pointer;
-      font-size:.85rem;
+      font-size:.9rem;
     }
 
     /* Templates */
     .templates-grid {
       display:flex;
       flex-wrap:wrap;
-      gap:8px;
+      gap:10px;
     }
     .template-card {
-      flex:0 0 200px;
+      flex:0 0 220px;
       background:var(--soft);
-      border-radius:10px;
+      border-radius:12px;
       border:1px solid var(--border);
-      padding:8px;
+      padding:10px;
       cursor:pointer;
-      font-size:.85rem;
+      font-size:.9rem;
     }
     .template-card:hover {
       border-color:var(--accent);
@@ -379,23 +410,23 @@
 
     /* Archiv */
     .archive-list {
-      margin-top:8px;
+      margin-top:10px;
       display:flex;
       flex-direction:column;
-      gap:6px;
-      max-height:400px;
+      gap:8px;
+      max-height:70vh;
       overflow-y:auto;
     }
     .archive-item {
       background:var(--soft);
-      border-radius:9px;
+      border-radius:10px;
       border:1px solid var(--border);
-      padding:6px 8px;
-      font-size:.8rem;
+      padding:8px 10px;
+      font-size:.85rem;
       position:relative;
     }
     .archive-title { font-weight:600; }
-    .archive-meta { font-size:.75rem; color:var(--muted); margin-top:2px; }
+    .archive-meta { font-size:.8rem; color:var(--muted); margin-top:2px; }
     .archive-delete {
       position:absolute;
       top:4px;
@@ -404,7 +435,7 @@
       background:transparent;
       color:var(--danger);
       cursor:pointer;
-      font-size:.85rem;
+      font-size:.9rem;
     }
 
     /* Modal */
@@ -421,10 +452,10 @@
     .modal-backdrop.active { display:flex; }
     .modal {
       background:#020617;
-      border-radius:12px;
+      border-radius:14px;
       border:1px solid var(--border);
-      padding:12px;
-      max-width:420px;
+      padding:14px;
+      max-width:480px;
       width:100%;
     }
     .modal header {
@@ -435,29 +466,29 @@
     }
     .modal header h3 {
       margin:0;
-      font-size:1rem;
+      font-size:1.05rem;
     }
     .modal-close {
       border:none;
       background:transparent;
       cursor:pointer;
       color:var(--muted);
-      font-size:1.1rem;
+      font-size:1.2rem;
       padding:0 6px;
     }
     .modal textarea {
       width:100%;
       background:#020617;
-      border-radius:8px;
+      border-radius:10px;
       border:1px solid var(--border);
-      padding:6px 8px;
+      padding:8px 10px;
       color:var(--text);
-      min-height:120px;
-      font-size:.85rem;
+      min-height:140px;
+      font-size:.9rem;
       resize:vertical;
     }
     .modal footer {
-      margin-top:8px;
+      margin-top:10px;
       text-align:right;
     }
     .modal footer button {
@@ -465,9 +496,9 @@
       border:1px solid var(--accent);
       background:#0ea5e9;
       color:#020617;
-      padding:6px 12px;
+      padding:8px 14px;
       cursor:pointer;
-      font-size:.85rem;
+      font-size:.9rem;
       font-weight:600;
     }
   </style>
@@ -662,7 +693,6 @@
 
     async function loadBoard(board) {
       const table = board === "org" ? "org_tasks" : "cs2_tasks";
-      const boardEl = document.querySelector(`.board[data-board="${board}"]`);
       const filterEl = document.querySelector(`.category-filter[data-board="${board}"]`);
 
       const [tasksRes, listsRes] = await Promise.all([
@@ -775,10 +805,13 @@
         if (pillMap[status]) pill.textContent = pillMap[status];
         else pill.textContent = "Benutzerdefiniert";
 
+        const right = document.createElement("div");
+        right.className = "column-header-right";
+
         const addBtn = document.createElement("button");
         addBtn.className = "column-add";
         addBtn.title = "Karte in dieser Liste anlegen";
-        addBtn.textContent = "+";
+        addBtn.textContent = "+ Karte";
         addBtn.addEventListener("click", async (e) => {
           e.stopPropagation();
           const title = prompt(`Titel der Karte in "${status}":`);
@@ -797,22 +830,24 @@
           loadBoard(board);
         });
 
-        head.appendChild(title);
-        head.appendChild(pill);
-        head.appendChild(addBtn);
+        right.appendChild(addBtn);
 
         // Lösch-Button nur für benutzerdefinierte Listen (nicht für ToDo/Doing/Done)
         if (!coreStatuses.includes(status)) {
           const delListBtn = document.createElement("button");
-          delListBtn.className = "icon-btn danger";
+          delListBtn.className = "list-delete-btn";
           delListBtn.title = `Liste "${status}" inkl. Karten löschen`;
-          delListBtn.textContent = "🗑";
+          delListBtn.textContent = "Liste löschen";
           delListBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             deleteCustomList(board, status);
           });
-          head.appendChild(delListBtn);
+          right.appendChild(delListBtn);
         }
+
+        head.appendChild(title);
+        head.appendChild(pill);
+        head.appendChild(right);
 
         const tasksContainer = document.createElement("div");
         tasksContainer.className = "tasks";
@@ -1340,7 +1375,7 @@
           <strong>${player.ingame_name}</strong>
           <div>${player.real_name || ""}</div>
           <div>Elo: ${player.elo ?? "-"}</div>
-          <div style="font-size:0.75rem;color:var(--muted);">
+          <div style="font-size:0.8rem;color:var(--muted);">
             Beitritt: ${player.join_date || "-"}<br />
             Zuletzt bearbeitet: ${player.updated_at ? new Date(player.updated_at).toLocaleDateString() : "-"}
           </div>
