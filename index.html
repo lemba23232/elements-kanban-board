@@ -284,9 +284,13 @@
 
             <form class="form-row" id="team-form">
               <input type="text" name="name" placeholder="Teamname" />
-              <input type="text" name="image_url" placeholder="Bild-URL (optional)" />
+              <!-- ✅ PC Upload statt URL -->
+              <input type="file" name="image_file" accept="image/*" />
               <button type="submit">+ Team</button>
             </form>
+            <div style="color:var(--muted);font-size:.8rem;margin-top:6px;">
+              Hinweis: Bilder werden in Supabase Storage Bucket <strong>team-images</strong> hochgeladen.
+            </div>
           </div>
 
           <div class="teams-right card">
@@ -440,7 +444,7 @@
       });
     });
 
-    // Two-click confirm helper
+    // Two-click confirm helper (Badge-Text: "Abbrechen")
     function twoClickConfirm(button, onConfirm){
       const key = "confirming";
       const already = button.dataset[key] === "1";
@@ -449,7 +453,7 @@
         button.classList.add("confirming");
         const badge = document.createElement("span");
         badge.className = "confirm-badge";
-        badge.textContent = "Abbrechen";
+        badge.textContent = "Abbrechen"; // ✅ statt OK
         badge.dataset.badge = "1";
         button.parentElement.appendChild(badge);
 
@@ -594,7 +598,6 @@
         const right = document.createElement("div");
         right.className = "column-header-right";
 
-        // ✅ Plus nur für Custom-Listen: jetzt Modal statt Inline-Box
         if (!coreStatuses.includes(status)) {
           const addBtn = document.createElement("button");
           addBtn.className = "column-add";
@@ -1015,7 +1018,7 @@
       });
     }
 
-    // Teams
+    // Teams (PC Upload)
     const teamListEl = document.getElementById("team-list");
     const teamForm = document.getElementById("team-form");
     const playerForm = document.getElementById("player-form");
@@ -1129,13 +1132,42 @@
       else teamMetaEl.textContent = `Spieler: ${data.length} · Keine Elo-Daten`;
     }
 
+    // ✅ Team erstellen + optionales Bild-Upload nach Supabase Storage Bucket "team-images"
     teamForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = teamForm.name.value.trim();
-      const image_url = teamForm.image_url.value.trim() || null;
       if (!name) return;
 
-      const { data, error } = await supa.from("teams").insert({ name, image_url }).select().single();
+      const fileInput = teamForm.querySelector('input[name="image_file"]');
+      const file = fileInput?.files?.[0] || null;
+
+      let image_url = null;
+
+      if (file) {
+        const ext = (file.name.split(".").pop() || "png").toLowerCase();
+        const safeName = name.replace(/[^a-z0-9-_]/gi, "_").toLowerCase();
+        const path = `${Date.now()}_${safeName}.${ext}`;
+
+        const { error: upErr } = await supa
+          .storage
+          .from("team-images")
+          .upload(path, file, { upsert: false });
+
+        if (upErr) {
+          console.error(upErr);
+          return toast("Fehler", "Bild-Upload fehlgeschlagen: " + (upErr.message || ""));
+        }
+
+        const { data: pub } = supa.storage.from("team-images").getPublicUrl(path);
+        image_url = pub?.publicUrl || null;
+      }
+
+      const { data, error } = await supa
+        .from("teams")
+        .insert({ name, image_url })
+        .select()
+        .single();
+
       if (error) { console.error(error); return toast("Fehler", error.message || "team insert"); }
 
       teamForm.reset();
