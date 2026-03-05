@@ -6,519 +6,223 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
-    :root {
-      --bg: #020617;
-      --card: #0f172a;
-      --soft: #0b1120;
-      --border: #1f2937;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --accent: #38bdf8;
-      --danger: #ef4444;
-      --ok: #22c55e;
-      --warn: #eab308;
+    :root{
+      --bg:#020617; --card:#0f172a; --soft:#0b1120; --border:#1f2937;
+      --text:#e5e7eb; --muted:#9ca3af; --accent:#38bdf8;
+      --danger:#ef4444; --ok:#22c55e; --warn:#eab308;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 24px;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:24px;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background: radial-gradient(circle at top, #16a34a 0, #020617 55%);
-      color: var(--text);
-      font-size: 16px;
+      color:var(--text); font-size:16px;
     }
-    .app {
-      max-width: 1600px;
-      width: 100%;
-      margin: 0 auto;
+    .app{max-width:1600px;width:100%;margin:0 auto}
+    h1{margin:0 0 16px;font-size:1.9rem;font-weight:700}
+    .tabs{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+    .tab-btn{
+      border-radius:999px;border:1px solid var(--border);
+      padding:8px 16px;background:#020617cc;color:var(--muted);
+      cursor:pointer;font-size:.95rem;display:inline-flex;align-items:center;gap:6px;
+      backdrop-filter:blur(12px);transition:all .15s;
     }
-    h1 {
-      margin: 0 0 16px;
-      font-size: 1.9rem;
-      font-weight: 700;
-    }
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-    .tab-btn {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      background: #020617cc;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 0.95rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      backdrop-filter: blur(12px);
-      transition: all .15s;
-    }
-    .tab-btn span.dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: var(--border);
-    }
-    .tab-btn.active {
-      border-color: var(--accent);
-      color: var(--text);
-      background: #020617;
-      transform: translateY(-1px);
-    }
-    .tab-btn.active span.dot {
-      background: var(--accent);
-    }
-    .tab { display: none; }
-    .tab.active { display: block; }
+    .tab-btn span.dot{width:9px;height:9px;border-radius:999px;background:var(--border)}
+    .tab-btn.active{border-color:var(--accent);color:var(--text);background:#020617;transform:translateY(-1px)}
+    .tab-btn.active span.dot{background:var(--accent)}
+    .tab{display:none}.tab.active{display:block}
 
-    .card {
-      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      padding: 16px;
-      box-shadow: 0 24px 60px rgba(0,0,0,.75);
+    .card{
+      background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
+      border-radius:16px;border:1px solid var(--border);
+      padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.75);
     }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
+    .header{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+    .header h2{margin:0;font-size:1.15rem;font-weight:600}
+
+    /* Toast */
+    .toast{
+      position:fixed; top:16px; right:16px; z-index:100;
+      background:#020617; border:1px solid var(--border); border-radius:12px;
+      padding:10px 12px; box-shadow:0 18px 40px rgba(0,0,0,.6);
+      display:none; max-width:380px;
     }
-    .header h2 {
-      margin: 0;
-      font-size: 1.15rem;
-      font-weight: 600;
-    }
-    .pill {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      font-size: 0.8rem;
-      color: var(--muted);
-      background: #020617aa;
-    }
+    .toast.show{display:block}
+    .toast-title{font-weight:700; margin-bottom:4px}
+    .toast-msg{color:var(--muted); font-size:.9rem; white-space:pre-wrap}
 
     /* Board */
-    .board {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      overflow-x: auto;
-      padding-bottom: 10px;
-      min-height: 70vh;
+    .board{
+      display:flex;gap:16px;align-items:flex-start;
+      overflow-x:auto;padding-bottom:10px;min-height:70vh;
     }
-    .column {
-      min-width: 280px;
-      background: var(--soft);
-      border-radius: 14px;
-      padding: 10px;
-      border: 1px solid var(--border);
+    .column{
+      min-width:280px;background:var(--soft);
+      border-radius:14px;padding:10px;border:1px solid var(--border);
     }
-    .column.todo {
-      border-color: #ef4444bb;
-      background: linear-gradient(180deg,#450a0a,#020617);
+    .column.todo{border-color:#ef4444bb;background:linear-gradient(180deg,#450a0a,#020617)}
+    .column.doing{border-color:#eab308bb;background:linear-gradient(180deg,#422006,#020617)}
+    .column.done{border-color:#22c55ebb;background:linear-gradient(180deg,#064e3b,#020617)}
+    .column.extra{border-color:#38bdf8aa;background:linear-gradient(180deg,#0f172a,#020617)}
+
+    .column-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
+    .column-title{font-size:.95rem;font-weight:600}
+    .column-pill{
+      font-size:.75rem;padding:2px 8px;border-radius:999px;border:1px solid #ffffff33;
+      color:var(--muted);white-space:nowrap;
     }
-    .column.doing {
-      border-color: #eab308bb;
-      background: linear-gradient(180deg,#422006,#020617);
+    .column-header-right{display:flex;gap:6px;align-items:center}
+    .column-add{
+      border-radius:999px;border:1px solid var(--accent);
+      background:#0ea5e9;color:#020617;cursor:pointer;
+      font-size:.9rem;padding:1px 9px;font-weight:700;line-height:1.4;
     }
-    .column.done {
-      border-color: #22c55ebb;
-      background: linear-gradient(180deg,#064e3b,#020617);
+    .list-delete-btn{
+      border-radius:999px;border:1px solid var(--danger);
+      background:#7f1d1d;color:#fee2e2;cursor:pointer;
+      font-size:.95rem;padding:1px 8px;font-weight:700;line-height:1.4;
     }
-    .column.extra {
-      border-color: #38bdf8aa;
-      background: linear-gradient(180deg,#0f172a,#020617);
+    .tasks{min-height:60px}
+
+    .task{
+      background:#020617f0;border-radius:10px;border:1px solid #ffffff1a;
+      padding:8px 9px;margin-bottom:8px;cursor:grab;font-size:.9rem;
+      display:flex;flex-direction:column;gap:4px;
     }
-    .column-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      gap: 8px;
-    }
-    .column-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-    .column-pill {
-      font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid #ffffff33;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .column-header-right {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-    .column-add {
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      background: #0ea5e9;
-      color: #020617;
-      cursor: pointer;
-      font-size: 0.8rem;
-      padding: 2px 8px;
-      font-weight: 600;
-    }
-    .column-add:hover {
-      filter: brightness(1.05);
-    }
-    .list-delete-btn {
-      border-radius: 999px;
-      border: 1px solid var(--danger);
-      background: #7f1d1d;
-      color: #fee2e2;
-      cursor: pointer;
-      font-size: 0.9rem;
-      padding: 1px 7px;
-      font-weight: 600;
-    }
-    .list-delete-btn:hover {
-      filter: brightness(1.05);
-    }
-    .tasks {
-      min-height: 60px;
+    .task:hover{border-color:var(--accent)}
+    .task-top{display:flex;justify-content:space-between;gap:6px;align-items:center}
+    .task-title{font-weight:600;font-size:.95rem}
+    .task-actions{display:flex;gap:8px;align-items:center}
+    .icon-btn{border:none;background:transparent;cursor:pointer;color:var(--muted);font-size:1rem;padding:0}
+    .icon-btn.danger{color:var(--danger)}
+    .icon-btn.archive{color:var(--ok)}
+    .task-category{font-size:.75rem;padding:2px 7px;border-radius:999px;background:#111827;color:var(--muted)}
+    .task-desc{font-size:.8rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    /* Two-click delete */
+    .confirming{outline:2px solid #ef444466; border-color:#ef4444aa !important;}
+    .confirm-badge{
+      font-size:.75rem; padding:2px 8px; border-radius:999px;
+      border:1px solid #ef4444aa; color:#fecaca; background:#7f1d1dcc;
     }
 
-    .task {
-      background: #020617f0;
-      border-radius: 10px;
-      border: 1px solid #ffffff1a;
-      padding: 8px 9px;
-      margin-bottom: 8px;
-      cursor: grab;
-      font-size: 0.9rem;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    /* Category filter */
+    .category-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+    .cat-pill{
+      font-size:.8rem;padding:4px 10px;border-radius:999px;border:1px solid var(--border);
+      background:#020617dd;color:var(--muted);cursor:pointer;
     }
-    .task:hover {
-      border-color: var(--accent);
-    }
-    .task-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      align-items: center;
-    }
-    .task-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-    .task-actions {
-      display: flex;
-      gap: 4px;
-    }
-    .icon-btn {
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      color: var(--muted);
-      font-size: 0.95rem;
-      padding: 0;
-    }
-    .icon-btn.danger { color: var(--danger); }
-    .icon-btn.archive { color: var(--ok); }
-    .task-category {
-      font-size: 0.75rem;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: #111827;
-      color: var(--muted);
-    }
-    .task-desc {
-      font-size: 0.8rem;
-      color: var(--muted);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    /* Category filter "bubbles" */
-    .category-filter {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-    .cat-pill {
-      font-size: 0.8rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #020617dd;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .cat-pill.active {
-      border-color: var(--accent);
-      color: var(--text);
-    }
+    .cat-pill.active{border-color:var(--accent);color:var(--text)}
 
     /* Forms */
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
+    .form-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .form-row input,.form-row textarea{
+      background:#020617;border-radius:10px;border:1px solid var(--border);
+      padding:8px 10px;color:var(--text);font-size:.85rem;flex:1;min-width:140px;
     }
-    .form-row input,
-    .form-row textarea {
-      background:#020617;
-      border-radius:10px;
-      border:1px solid var(--border);
-      padding:8px 10px;
-      color:var(--text);
-      font-size:.85rem;
-      flex:1;
-      min-width:140px;
-    }
-    .form-row textarea {
-      min-height:60px;
-      resize:vertical;
-    }
-    .form-row button {
-      border-radius:999px;
-      border:1px solid var(--accent);
-      background:#0ea5e9;
-      color:#020617;
-      font-size:.9rem;
-      padding:8px 14px;
-      cursor:pointer;
-      font-weight:600;
-      white-space:nowrap;
-    }
-    .form-row button:hover { filter:brightness(1.08); }
-
-    .new-list-form input {
-      font-size: 0.85rem;
-    }
-    .new-list-form button {
-      font-size: 0.85rem;
+    .form-row textarea{min-height:60px;resize:vertical}
+    .form-row button{
+      border-radius:999px;border:1px solid var(--accent);
+      background:#0ea5e9;color:#020617;font-size:.9rem;
+      padding:8px 14px;cursor:pointer;font-weight:600;white-space:nowrap;
     }
 
     /* Teams */
-    .teams-layout {
-      display:flex;
-      gap:16px;
-      flex-wrap:wrap;
-      min-height: 60vh;
+    .teams-layout{display:flex;gap:16px;flex-wrap:wrap;min-height:60vh}
+    .teams-left{flex:0 0 260px}
+    .teams-right{flex:1;min-width:300px}
+    .team-item{
+      padding:8px 10px;border-radius:10px;border:1px solid var(--border);
+      margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;
+      align-items:center;background:#020617aa;font-size:.9rem;
     }
-    .teams-left {
-      flex:0 0 260px;
+    .team-item.active{border-color:var(--accent);background:#020617ee}
+    .team-head{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+    .team-image{
+      width:72px;height:72px;border-radius:14px;object-fit:cover;
+      background:#020617;border:1px solid var(--border);
     }
-    .teams-right {
-      flex:1;
-      min-width:300px;
+    .team-meta{font-size:.85rem;color:var(--muted)}
+    .players{display:flex;flex-wrap:wrap;gap:10px}
+    .player-card{
+      background:var(--soft);border-radius:10px;border:1px solid var(--border);
+      padding:8px 10px;min-width:180px;font-size:.85rem;position:relative;
     }
-    .team-item {
-      padding:8px 10px;
-      border-radius:10px;
-      border:1px solid var(--border);
-      margin-bottom:8px;
-      cursor:pointer;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      background:#020617aa;
-      font-size:0.9rem;
-    }
-    .team-label {
-      display:flex;
-      gap:4px;
-      align-items:center;
-    }
-    .team-item.active {
-      border-color:var(--accent);
-      background:#020617ee;
-    }
-    .team-head {
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin-bottom:10px;
-    }
-    .team-image {
-      width:72px;
-      height:72px;
-      border-radius:14px;
-      object-fit:cover;
-      background:#020617;
-      border:1px solid var(--border);
-    }
-    .team-meta {
-      font-size:.85rem;
-      color:var(--muted);
-    }
-    .players {
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-    .player-card {
-      background:var(--soft);
-      border-radius:10px;
-      border:1px solid var(--border);
-      padding:8px 10px;
-      min-width:180px;
-      font-size:.85rem;
-      position:relative;
-    }
-    .player-card strong {
-      font-size:.95rem;
-    }
-    .player-delete {
-      position:absolute;
-      top:4px;
-      right:4px;
-      border:none;
-      background:transparent;
-      color:var(--danger);
-      cursor:pointer;
-      font-size:.9rem;
-    }
+    .player-delete{position:absolute;top:4px;right:4px;border:none;background:transparent;color:var(--danger);cursor:pointer;font-size:.95rem}
 
     /* Templates */
-    .templates-grid {
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
+    .templates-grid{display:flex;flex-wrap:wrap;gap:10px}
+    .template-card{
+      flex:0 0 220px;background:var(--soft);border-radius:12px;border:1px solid var(--border);
+      padding:10px;cursor:pointer;font-size:.9rem;
     }
-    .template-card {
-      flex:0 0 220px;
-      background:var(--soft);
-      border-radius:12px;
-      border:1px solid var(--border);
-      padding:10px;
-      cursor:pointer;
-      font-size:.9rem;
-    }
-    .template-card:hover {
-      border-color:var(--accent);
-    }
+    .template-card:hover{border-color:var(--accent)}
 
-    /* Archiv */
-    .archive-columns {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
+    /* Archive */
+    .archive-columns{display:flex;gap:16px;flex-wrap:wrap}
+    .archive-column{flex:1;min-width:260px}
+    .archive-column h3{margin:0 0 8px;font-size:.95rem;font-weight:600;color:var(--muted)}
+    .archive-list{
+      margin-top:4px;display:flex;flex-direction:column;gap:8px;
+      max-height:70vh;overflow-y:auto;
     }
-    .archive-column {
-      flex: 1;
-      min-width: 260px;
+    .archive-item{
+      background:var(--soft);border-radius:10px;border:1px solid var(--border);
+      padding:8px 10px;font-size:.85rem;position:relative;
     }
-    .archive-column h3 {
-      margin-top: 0;
-      margin-bottom: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--muted);
-    }
-    .archive-list {
-      margin-top: 4px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      max-height:70vh;
-      overflow-y:auto;
-    }
-    .archive-item {
-      background:var(--soft);
-      border-radius:10px;
-      border:1px solid var(--border);
-      padding:8px 10px;
-      font-size:.85rem;
-      position:relative;
-    }
-    .archive-title { font-weight:600; }
-    .archive-meta { font-size:.8rem; color:var(--muted); margin-top:2px; }
-    .archive-delete {
-      position:absolute;
-      top:4px;
-      right:4px;
-      border:none;
-      background:transparent;
-      color:var(--danger);
-      cursor:pointer;
-      font-size:.9rem;
-    }
+    .archive-delete{position:absolute;top:4px;right:4px;border:none;background:transparent;color:var(--danger);cursor:pointer;font-size:.95rem}
+    .archive-title{font-weight:600}
+    .archive-meta{font-size:.8rem;color:var(--muted);margin-top:2px}
 
-    /* Modal */
-    .modal-backdrop {
-      position:fixed;
-      inset:0;
-      background:rgba(15,23,42,.8);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:50;
-      padding:16px;
+    /* Modal (shared) */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(15,23,42,.8);
+      display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
     }
-    .modal-backdrop.active { display:flex; }
-    .modal {
-      background:#020617;
-      border-radius:14px;
-      border:1px solid var(--border);
-      padding:14px;
-      max-width:480px;
-      width:100%;
+    .modal-backdrop.active{display:flex}
+    .modal{
+      background:#020617;border-radius:14px;border:1px solid var(--border);
+      padding:14px;max-width:560px;width:100%;
     }
-    .modal header {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:8px;
+    .modal header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .modal header h3{margin:0;font-size:1.05rem}
+    .modal-close{border:none;background:transparent;cursor:pointer;color:var(--muted);font-size:1.2rem;padding:0 6px}
+    .modal textarea, .modal input{
+      width:100%;background:#020617;border-radius:10px;border:1px solid var(--border);
+      padding:8px 10px;color:var(--text);font-size:.9rem;
     }
-    .modal header h3 {
-      margin:0;
-      font-size:1.05rem;
+    .modal textarea{min-height:120px;resize:vertical}
+    .modal footer{margin-top:10px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+    .btn{
+      border-radius:999px;border:1px solid var(--border);
+      background:#020617;color:var(--text);
+      padding:8px 14px;cursor:pointer;font-weight:700;font-size:.9rem;
     }
-    .modal-close {
-      border:none;
-      background:transparent;
-      cursor:pointer;
-      color:var(--muted);
-      font-size:1.2rem;
-      padding:0 6px;
+    .btn.primary{border-color:var(--accent); background:#0ea5e9; color:#020617}
+    .section-title{margin:12px 0 6px;color:var(--muted);font-weight:700;font-size:.85rem}
+
+    /* Comments */
+    .comments{
+      border:1px solid var(--border);border-radius:10px;padding:8px;
+      background:#0b1120;max-height:220px;overflow:auto;
     }
-    .modal textarea {
-      width:100%;
-      background:#020617;
-      border-radius:10px;
-      border:1px solid var(--border);
-      padding:8px 10px;
-      color:var(--text);
-      min-height:140px;
-      font-size:.9rem;
-      resize:vertical;
+    .comment{
+      padding:8px;border-radius:10px;border:1px solid #ffffff12;background:#020617aa;margin-bottom:8px;
     }
-    .modal footer {
-      margin-top:10px;
-      text-align:right;
-    }
-    .modal footer button {
-      border-radius:999px;
-      border:1px solid var(--accent);
-      background:#0ea5e9;
-      color:#020617;
-      padding:8px 14px;
-      cursor:pointer;
-      font-size:.9rem;
-      font-weight:600;
-    }
+    .comment:last-child{margin-bottom:0}
+    .comment-head{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.78rem}
+    .comment-body{margin-top:4px;font-size:.9rem}
+    .comment-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .comment-form input{flex:0 0 180px}
+    .comment-form textarea{flex:1;min-width:220px;min-height:48px}
   </style>
 </head>
 <body>
+  <div class="toast" id="toast">
+    <div class="toast-title" id="toast-title">Info</div>
+    <div class="toast-msg" id="toast-msg"></div>
+  </div>
+
   <div class="app">
     <h1>Elements Management Board</h1>
 
@@ -530,25 +234,17 @@
       <button class="tab-btn" data-tab="archive"><span class="dot"></span>Archiv</button>
     </div>
 
-    <!-- Org Tab -->
     <div id="tab-org" class="tab active">
       <div class="card">
-        <div class="header">
-          <h2>Orgamanagement Board</h2>
-          <div class="pill">To Do = Rot · Doing = Gelb · Done = Grün · unendlich Listen</div>
-        </div>
-
+        <div class="header"><h2>Orgamanagement Board</h2></div>
         <div class="category-filter" data-board="org"></div>
-
         <div class="board" data-board="org"></div>
 
-        <!-- Neue benutzerdefinierte Liste (ohne Karte) -->
         <form class="form-row new-list-form" data-board="org">
           <input type="text" name="list_name" placeholder="Neue Liste / Blase (z.B. Probleme)" />
           <button type="submit">+ Liste anlegen</button>
         </form>
 
-        <!-- Normale Aufgaben in To Do -->
         <form class="form-row" data-board="org">
           <input type="text" name="title" placeholder="Neue Aufgabe..." />
           <input type="text" name="category" placeholder="Kategorie (z.B. Probleme)" />
@@ -558,25 +254,17 @@
       </div>
     </div>
 
-    <!-- CS2 Tab -->
     <div id="tab-cs2" class="tab">
       <div class="card">
-        <div class="header">
-          <h2>CS2 Management Board</h2>
-          <div class="pill">Eigene Aufgaben nur für CS2 · unendlich Listen</div>
-        </div>
-
+        <div class="header"><h2>CS2 Management Board</h2></div>
         <div class="category-filter" data-board="cs2"></div>
-
         <div class="board" data-board="cs2"></div>
 
-        <!-- Neue benutzerdefinierte Liste (ohne Karte) -->
         <form class="form-row new-list-form" data-board="cs2">
           <input type="text" name="list_name" placeholder="Neue Liste / Blase (z.B. Probleme)" />
           <button type="submit">+ Liste anlegen</button>
         </form>
 
-        <!-- Normale Aufgaben in To Do -->
         <form class="form-row" data-board="cs2">
           <input type="text" name="title" placeholder="Neue CS2-Aufgabe..." />
           <input type="text" name="category" placeholder="Kategorie (z.B. Scrims, Taktik)" />
@@ -586,16 +274,12 @@
       </div>
     </div>
 
-    <!-- Teams Tab -->
     <div id="tab-teams" class="tab">
       <div class="card">
-        <div class="header">
-          <h2>Teams & Spieler</h2>
-          <div class="pill">Teambild · Spieler · Ø Elo · löschbar</div>
-        </div>
+        <div class="header"><h2>Teams & Spieler</h2></div>
         <div class="teams-layout">
           <div class="teams-left card">
-            <h3 style="margin-top:0;font-size:0.95rem;">Teams</h3>
+            <h3 style="margin-top:0;font-size:.95rem;">Teams</h3>
             <div id="team-list"></div>
 
             <form class="form-row" id="team-form">
@@ -604,6 +288,7 @@
               <button type="submit">+ Team</button>
             </form>
           </div>
+
           <div class="teams-right card">
             <div class="team-head">
               <img id="team-image" class="team-image" alt="Teambild" />
@@ -612,7 +297,9 @@
                 <div class="team-meta" id="team-meta">Bitte links ein Team auswählen.</div>
               </div>
             </div>
+
             <div class="players" id="players"></div>
+
             <form class="form-row" id="player-form">
               <input type="text" name="ingame_name" placeholder="Ingame-Name" />
               <input type="text" name="real_name" placeholder="Echter Name" />
@@ -625,14 +312,11 @@
       </div>
     </div>
 
-    <!-- Templates Tab -->
     <div id="tab-templates" class="tab">
       <div class="card">
-        <div class="header">
-          <h2>Vorlagen</h2>
-          <div class="pill">z.B. Wochenbericht als Karte</div>
-        </div>
+        <div class="header"><h2>Vorlagen</h2></div>
         <div class="templates-grid" id="templates-grid"></div>
+
         <form class="form-row" id="template-form">
           <input type="text" name="title" placeholder="Vorlagenname (z.B. Wochenbericht)" />
           <textarea name="content" placeholder="Text der Vorlage..."></textarea>
@@ -641,13 +325,9 @@
       </div>
     </div>
 
-    <!-- Archiv Tab -->
     <div id="tab-archive" class="tab">
       <div class="card">
-        <div class="header">
-          <h2>Archivierte Aufgaben</h2>
-          <div class="pill">Vom Board ins Archiv verschoben · hier löschbar</div>
-        </div>
+        <div class="header"><h2>Archivierte Aufgaben</h2></div>
         <div class="archive-columns">
           <div class="archive-column">
             <h3>Orga Archiv</h3>
@@ -662,17 +342,53 @@
     </div>
   </div>
 
-  <!-- Task Modal -->
+  <!-- Modal: Task details + comments -->
   <div class="modal-backdrop" id="task-modal-backdrop">
     <div class="modal">
       <header>
         <h3 id="task-modal-title">Aufgabe</h3>
         <button class="modal-close" data-close-task>&times;</button>
       </header>
-      <div class="pill" id="task-modal-info">Liste / Kategorie</div>
+
+      <div id="task-modal-info" style="color:var(--muted);font-size:.85rem;"></div>
+
+      <div class="section-title">Beschreibung</div>
       <textarea id="task-modal-description"></textarea>
+
+      <div class="section-title">Kommentare</div>
+      <div class="comments" id="task-comments"></div>
+
+      <div class="comment-form">
+        <input id="comment-author" type="text" placeholder="Dein Name" />
+        <textarea id="comment-content" placeholder="Kommentar schreiben..."></textarea>
+      </div>
+
       <footer>
-        <button id="task-modal-save">Speichern</button>
+        <button class="btn" id="task-modal-add-comment" type="button">Kommentar senden</button>
+        <button class="btn primary" id="task-modal-save" type="button">Beschreibung speichern</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal: Add card to custom list -->
+  <div class="modal-backdrop" id="addcard-modal-backdrop">
+    <div class="modal">
+      <header>
+        <h3 id="addcard-modal-title">Karte erstellen</h3>
+        <button class="modal-close" data-close-addcard>&times;</button>
+      </header>
+
+      <div id="addcard-modal-info" style="color:var(--muted);font-size:.85rem;"></div>
+
+      <div class="section-title">Titel</div>
+      <input id="addcard-title" type="text" placeholder="Titel der Karte" />
+
+      <div class="section-title">Beschreibung (optional)</div>
+      <textarea id="addcard-desc" placeholder="Beschreibung..."></textarea>
+
+      <footer>
+        <button class="btn" data-close-addcard type="button">Abbrechen</button>
+        <button class="btn primary" id="addcard-save" type="button">Speichern</button>
       </footer>
     </div>
   </div>
@@ -686,7 +402,7 @@
       </header>
       <textarea id="template-modal-content" readonly></textarea>
       <footer>
-        <button data-close-template>Schließen</button>
+        <button class="btn primary" data-close-template type="button">Schließen</button>
       </footer>
     </div>
   </div>
@@ -696,7 +412,20 @@
     const SUPABASE_ANON_KEY = "sb_publishable_z188lmhx8TUaNan8fQGZzw_z3zwZ87o";
     const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    /* Tabs */
+    // Toast
+    const toastEl = document.getElementById("toast");
+    const toastTitleEl = document.getElementById("toast-title");
+    const toastMsgEl = document.getElementById("toast-msg");
+    let toastTimer = null;
+    function toast(title, msg){
+      toastTitleEl.textContent = title;
+      toastMsgEl.textContent = msg || "";
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 3500);
+    }
+
+    // Tabs
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const tab = btn.dataset.tab;
@@ -711,97 +440,133 @@
       });
     });
 
-    /* Boards (Org & CS2) */
+    // Two-click confirm helper
+    function twoClickConfirm(button, onConfirm){
+      const key = "confirming";
+      const already = button.dataset[key] === "1";
+      if (!already){
+        button.dataset[key] = "1";
+        button.classList.add("confirming");
+        const badge = document.createElement("span");
+        badge.className = "confirm-badge";
+        badge.textContent = "OK";
+        badge.dataset.badge = "1";
+        button.parentElement.appendChild(badge);
 
-    const categoryFilterState = { org: "ALL", cs2: "ALL" };
+        setTimeout(() => {
+          if (button.dataset[key] === "1"){
+            button.dataset[key] = "0";
+            button.classList.remove("confirming");
+            const b = button.parentElement.querySelector('span[data-badge="1"]');
+            if (b) b.remove();
+          }
+        }, 3000);
+        return;
+      }
+      button.dataset[key] = "0";
+      button.classList.remove("confirming");
+      const b = button.parentElement.querySelector('span[data-badge="1"]');
+      if (b) b.remove();
+      onConfirm();
+    }
 
-    async function loadBoard(board) {
+    // Boards
+    const categoryFilterState = { org:"ALL", cs2:"ALL" };
+
+    async function loadBoard(board){
       const table = board === "org" ? "org_tasks" : "cs2_tasks";
       const filterEl = document.querySelector(`.category-filter[data-board="${board}"]`);
 
       const [tasksRes, listsRes] = await Promise.all([
-        supa.from(table).select("*").order("created_at", { ascending: true }),
+        supa.from(table).select("*").order("created_at", { ascending:true }),
         supa.from("custom_lists").select("*").eq("board", board)
       ]);
 
-      if (tasksRes.error) {
-        console.error(tasksRes.error);
-        alert("Fehler beim Laden der " + board + "-Aufgaben: " + (tasksRes.error.message || JSON.stringify(tasksRes.error)));
-        return;
-      }
-      if (listsRes.error) {
-        console.error(listsRes.error);
-        alert("Fehler beim Laden der Listen: " + (listsRes.error.message || JSON.stringify(listsRes.error)));
-        return;
-      }
+      if (tasksRes.error) { console.error(tasksRes.error); return toast("Supabase Fehler", tasksRes.error.message || "tasks load"); }
+      if (listsRes.error) { console.error(listsRes.error); return toast("Supabase Fehler", listsRes.error.message || "lists load"); }
 
       const allTasks = tasksRes.data || [];
       const customLists = listsRes.data || [];
 
-      // Kategorien sammeln
+      // Kategorien
       const categories = new Set();
-      allTasks.forEach(t => {
-        if (t.category && t.category.trim() !== "") categories.add(t.category.trim());
-      });
+      allTasks.forEach(t => { if (t.category && t.category.trim()) categories.add(t.category.trim()); });
 
-      // Filter-Pills
+      // Filter
       filterEl.innerHTML = "";
-      const allBtn = document.createElement("button");
-      allBtn.className = "cat-pill" + (categoryFilterState[board] === "ALL" ? " active" : "");
-      allBtn.textContent = "Alle";
-      allBtn.addEventListener("click", () => {
-        categoryFilterState[board] = "ALL";
-        loadBoard(board);
-      });
-      filterEl.appendChild(allBtn);
-
-      categories.forEach(cat => {
+      const addFilterBtn = (label, val) => {
         const btn = document.createElement("button");
-        btn.className = "cat-pill" + (categoryFilterState[board] === cat ? " active" : "");
-        btn.textContent = cat;
-        btn.addEventListener("click", () => {
-          categoryFilterState[board] = cat;
-          loadBoard(board);
-        });
+        btn.className = "cat-pill" + (categoryFilterState[board] === val ? " active" : "");
+        btn.textContent = label;
+        btn.addEventListener("click", () => { categoryFilterState[board] = val; loadBoard(board); });
         filterEl.appendChild(btn);
-      });
+      };
+      addFilterBtn("Alle", "ALL");
+      categories.forEach(cat => addFilterBtn(cat, cat));
 
       const filteredTasks = allTasks.filter(t => {
-        const filter = categoryFilterState[board];
-        if (filter === "ALL") return true;
-        return (t.category && t.category.trim() === filter);
+        const f = categoryFilterState[board];
+        if (f === "ALL") return true;
+        return (t.category && t.category.trim() === f);
       });
 
       renderBoard(board, filteredTasks, customLists);
     }
 
-    function renderBoard(board, tasks, customLists) {
+    // AddCard modal state
+    const addCardBackdrop = document.getElementById("addcard-modal-backdrop");
+    const addCardTitleEl = document.getElementById("addcard-modal-title");
+    const addCardInfoEl  = document.getElementById("addcard-modal-info");
+    const addCardTitleIn = document.getElementById("addcard-title");
+    const addCardDescIn  = document.getElementById("addcard-desc");
+    const addCardSaveBtn = document.getElementById("addcard-save");
+    let addCardState = null; // { board, status }
+
+    function openAddCardModal(board, status){
+      addCardState = { board, status };
+      addCardTitleEl.textContent = "Karte erstellen";
+      addCardInfoEl.textContent = `Board: ${board.toUpperCase()} · Liste: ${status}`;
+      addCardTitleIn.value = "";
+      addCardDescIn.value = "";
+      addCardBackdrop.classList.add("active");
+      setTimeout(() => addCardTitleIn.focus(), 50);
+    }
+    function closeAddCardModal(){
+      addCardBackdrop.classList.remove("active");
+      addCardState = null;
+    }
+    document.querySelectorAll("[data-close-addcard]").forEach(btn => btn.addEventListener("click", closeAddCardModal));
+    addCardBackdrop.addEventListener("click", (e)=>{ if (e.target === addCardBackdrop) closeAddCardModal(); });
+
+    addCardSaveBtn.addEventListener("click", async () => {
+      if (!addCardState) return;
+      const title = addCardTitleIn.value.trim();
+      const description = addCardDescIn.value.trim();
+      if (!title) return toast("Hinweis", "Bitte einen Titel eingeben.");
+
+      const { board, status } = addCardState;
+      const table = board === "org" ? "org_tasks" : "cs2_tasks";
+      const category = status;
+
+      const { error } = await supa.from(table).insert({ title, status, category, description });
+      if (error) { console.error(error); return toast("Fehler", error.message || "insert"); }
+
+      closeAddCardModal();
+      loadBoard(board);
+      toast("OK", "Karte erstellt.");
+    });
+
+    function renderBoard(board, tasks, customLists){
       const boardEl = document.querySelector(`.board[data-board="${board}"]`);
       boardEl.innerHTML = "";
 
       const coreStatuses = ["todo","doing","done"];
-      const labelMap = {
-        todo: "To Do",
-        doing: "Doing",
-        done: "Done"
-      };
-      const pillMap = {
-        todo: "Offen",
-        doing: "In Arbeit",
-        done: "Erledigt"
-      };
+      const labelMap = { todo:"To Do", doing:"Doing", done:"Done" };
+      const pillMap = { todo:"Offen", doing:"In Arbeit", done:"Erledigt" };
 
       const allStatuses = new Set(coreStatuses);
-      // aus custom_lists
-      customLists.forEach(l => {
-        if (l.name) allStatuses.add(l.name);
-      });
-      // zusätzliche Status aus bestehenden Tasks
-      tasks.forEach(t => {
-        if (t.status && !coreStatuses.includes(t.status)) {
-          allStatuses.add(t.status);
-        }
-      });
+      customLists.forEach(l => { if (l.name) allStatuses.add(l.name); });
+      tasks.forEach(t => { if (t.status && !coreStatuses.includes(t.status)) allStatuses.add(t.status); });
 
       const extras = [...allStatuses].filter(s => !coreStatuses.includes(s)).sort();
       const ordered = [...coreStatuses, ...extras];
@@ -809,11 +574,10 @@
       ordered.forEach(status => {
         const col = document.createElement("div");
         col.className = "column";
-        if (status === "todo") col.classList.add("todo");
-        else if (status === "doing") col.classList.add("doing");
-        else if (status === "done") col.classList.add("done");
+        if (status==="todo") col.classList.add("todo");
+        else if (status==="doing") col.classList.add("doing");
+        else if (status==="done") col.classList.add("done");
         else col.classList.add("extra");
-
         col.dataset.status = status;
 
         const head = document.createElement("div");
@@ -821,50 +585,34 @@
 
         const title = document.createElement("div");
         title.className = "column-title";
-        if (labelMap[status]) title.textContent = labelMap[status];
-        else title.textContent = status;
+        title.textContent = labelMap[status] || status;
 
         const pill = document.createElement("div");
         pill.className = "column-pill";
-        if (pillMap[status]) pill.textContent = pillMap[status];
-        else pill.textContent = "Benutzerdefiniert";
+        pill.textContent = pillMap[status] || "Benutzerdefiniert";
 
         const right = document.createElement("div");
         right.className = "column-header-right";
 
-        const addBtn = document.createElement("button");
-        addBtn.className = "column-add";
-        addBtn.title = "Karte in dieser Liste anlegen";
-        addBtn.textContent = "+";
-        addBtn.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          const title = prompt(`Titel der Karte in "${status}":`);
-          if (!title) return;
-          const description = prompt("Beschreibung (optional):") || "";
-          const table = board === "org" ? "org_tasks" : "cs2_tasks";
-          const category = status; // Kategorie = Listenname
-          const { error } = await supa
-            .from(table)
-            .insert({ title, status, category, description });
-          if (error) {
-            console.error(error);
-            alert("Fehler beim Anlegen der Karte: " + (error.message || JSON.stringify(error)));
-            return;
-          }
-          loadBoard(board);
-        });
-
-        right.appendChild(addBtn);
-
-        // Lösch-Button nur für benutzerdefinierte Listen (nicht für ToDo/Doing/Done)
+        // ✅ Plus nur für Custom-Listen: jetzt Modal statt Inline-Box
         if (!coreStatuses.includes(status)) {
+          const addBtn = document.createElement("button");
+          addBtn.className = "column-add";
+          addBtn.title = "Karte in dieser Liste anlegen";
+          addBtn.textContent = "+";
+          addBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openAddCardModal(board, status);
+          });
+          right.appendChild(addBtn);
+
           const delListBtn = document.createElement("button");
           delListBtn.className = "list-delete-btn";
-          delListBtn.title = `Liste "${status}" inkl. Karten löschen`;
+          delListBtn.title = `Liste "${status}" löschen`;
           delListBtn.textContent = "🗑";
           delListBtn.addEventListener("click", (e) => {
             e.stopPropagation();
-            deleteCustomList(board, status);
+            twoClickConfirm(delListBtn, () => deleteCustomList(board, status));
           });
           right.appendChild(delListBtn);
         }
@@ -882,11 +630,10 @@
       });
 
       tasks.forEach(task => addTaskToBoard(board, task));
-
       attachBoardDnD();
     }
 
-    function addTaskToBoard(board, task) {
+    function addTaskToBoard(board, task){
       const boardEl = document.querySelector(`.board[data-board="${board}"]`);
       const col = boardEl.querySelector(`.column[data-status="${task.status}"] .tasks`);
       if (!col) return;
@@ -915,18 +662,15 @@
       archiveBtn.className = "icon-btn archive";
       archiveBtn.title = "In Archiv verschieben";
       archiveBtn.textContent = "📦";
-      archiveBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        archiveTask(el);
-      });
+      archiveBtn.addEventListener("click", (e) => { e.stopPropagation(); archiveTask(el); });
 
       const deleteBtn = document.createElement("button");
       deleteBtn.className = "icon-btn danger";
-      deleteBtn.title = "Aufgabe löschen";
+      deleteBtn.title = "Löschen";
       deleteBtn.textContent = "🗑";
       deleteBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        deleteTask(el);
+        twoClickConfirm(deleteBtn, () => deleteTask(el));
       });
 
       actions.appendChild(archiveBtn);
@@ -938,7 +682,7 @@
 
       const right = document.createElement("div");
       right.style.display = "flex";
-      right.style.gap = "4px";
+      right.style.gap = "8px";
       right.style.alignItems = "center";
       right.appendChild(catSpan);
       right.appendChild(actions);
@@ -956,10 +700,7 @@
       }
 
       el.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", JSON.stringify({
-          id: task.id,
-          board
-        }));
+        e.dataTransfer.setData("text/plain", JSON.stringify({ id: task.id, board }));
       });
 
       el.addEventListener("click", () => openTaskModal(el));
@@ -967,7 +708,7 @@
       col.appendChild(el);
     }
 
-    function attachBoardDnD() {
+    function attachBoardDnD(){
       document.querySelectorAll(".board").forEach(boardEl => {
         boardEl.querySelectorAll(".column").forEach(col => {
           col.addEventListener("dragover", e => e.preventDefault());
@@ -984,21 +725,14 @@
               taskEl.dataset.status = newStatus;
             }
 
-            const { error } = await supa
-              .from(table)
-              .update({ status: newStatus })
-              .eq("id", payload.id);
-
-            if (error) {
-              console.error(error);
-              alert("Fehler beim Aktualisieren des Status: " + (error.message || JSON.stringify(error)));
-            }
+            const { error } = await supa.from(table).update({ status:newStatus }).eq("id", payload.id);
+            if (error) { console.error(error); toast("Fehler", error.message || "update"); }
           });
         });
       });
     }
 
-    // Neue Aufgaben (To Do)
+    // Create task in ToDo via big form
     document.querySelectorAll("form.form-row[data-board]").forEach(form => {
       if (form.classList.contains("new-list-form")) return;
       form.addEventListener("submit", async (e) => {
@@ -1010,22 +744,15 @@
         const description = form.description.value.trim();
         if (!title) return;
 
-        const { error } = await supa
-          .from(table)
-          .insert({ title, status: "todo", category, description });
-
-        if (error) {
-          console.error(error);
-          alert("Fehler beim Anlegen der Aufgabe: " + (error.message || JSON.stringify(error)));
-          return;
-        }
+        const { error } = await supa.from(table).insert({ title, status:"todo", category, description });
+        if (error) { console.error(error); return toast("Fehler", error.message || "insert"); }
 
         form.reset();
         loadBoard(board);
       });
     });
 
-    // Neue benutzerdefinierte Liste (ohne Karte)
+    // Create custom list
     document.querySelectorAll("form.new-list-form").forEach(form => {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -1033,136 +760,40 @@
         const listName = form.list_name.value.trim();
         if (!listName) return;
 
-        const { error } = await supa
-          .from("custom_lists")
-          .insert({ board, name: listName });
-
-        if (error) {
-          console.error(error);
-          alert("Fehler beim Anlegen der Liste: " + (error.message || JSON.stringify(error)));
-          return;
-        }
+        const { error } = await supa.from("custom_lists").insert({ board, name:listName });
+        if (error) { console.error(error); return toast("Fehler", error.message || "custom_lists insert"); }
 
         form.reset();
         loadBoard(board);
       });
     });
 
-    /* Task Modal */
-    const taskModalBackdrop = document.getElementById("task-modal-backdrop");
-    const taskModalTitle = document.getElementById("task-modal-title");
-    const taskModalInfo = document.getElementById("task-modal-info");
-    const taskModalDescription = document.getElementById("task-modal-description");
-    const taskModalSave = document.getElementById("task-modal-save");
-    let currentTaskEl = null;
-
-    function openTaskModal(taskEl) {
-      currentTaskEl = taskEl;
-      taskModalTitle.textContent = taskEl.dataset.title;
-      const cat = taskEl.dataset.category || "Allgemein";
-      const status = taskEl.dataset.status;
-      taskModalInfo.textContent = `Liste: ${status} · Kategorie: ${cat}`;
-      taskModalDescription.value = taskEl.dataset.description || "";
-      taskModalBackdrop.classList.add("active");
-    }
-    function closeTaskModal() {
-      taskModalBackdrop.classList.remove("active");
-      currentTaskEl = null;
-    }
-    document.querySelectorAll("[data-close-task]").forEach(btn => {
-      btn.addEventListener("click", closeTaskModal);
-    });
-    taskModalBackdrop.addEventListener("click", (e) => {
-      if (e.target === taskModalBackdrop) closeTaskModal();
-    });
-
-    taskModalSave.addEventListener("click", async () => {
-      if (!currentTaskEl) return;
-      const id = currentTaskEl.dataset.id;
-      const board = currentTaskEl.dataset.board;
-      const table = board === "org" ? "org_tasks" : "cs2_tasks";
-      const newDesc = taskModalDescription.value;
-
-      const { error } = await supa
-        .from(table)
-        .update({ description: newDesc })
-        .eq("id", id);
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Speichern: " + (error.message || JSON.stringify(error)));
-        return;
-      }
-
-      currentTaskEl.dataset.description = newDesc;
-      const descEl = currentTaskEl.querySelector(".task-desc");
-      if (descEl) descEl.textContent = newDesc;
-      else if (newDesc) {
-        const d = document.createElement("div");
-        d.className = "task-desc";
-        d.textContent = newDesc;
-        currentTaskEl.appendChild(d);
-      }
-      closeTaskModal();
-    });
-
-    /* Löschen & Archivieren */
-
-    async function deleteCustomList(board, listName) {
-      if (!confirm(`Liste "${listName}" und alle Karten darin löschen?`)) return;
-
+    async function deleteCustomList(board, listName){
       const table = board === "org" ? "org_tasks" : "cs2_tasks";
 
-      // 1. Alle Karten in dieser Liste löschen (nur im aktuellen Board)
-      const { error: delTasksErr } = await supa
-        .from(table)
-        .delete()
-        .eq("status", listName);
+      const { error: delTasksErr } = await supa.from(table).delete().eq("status", listName);
+      if (delTasksErr) { console.error(delTasksErr); return toast("Fehler", delTasksErr.message || "Karten konnten nicht gelöscht werden"); }
 
-      if (delTasksErr) {
-        console.error(delTasksErr);
-        alert("Fehler beim Löschen der Karten: " + (delTasksErr.message || JSON.stringify(delTasksErr)));
-        return;
-      }
+      const { error: delListErr } = await supa.from("custom_lists").delete().eq("board", board).eq("name", listName);
+      if (delListErr) { console.error(delListErr); return toast("Fehler", delListErr.message || "Liste konnte nicht gelöscht werden"); }
 
-      // 2. Die Liste selbst aus custom_lists entfernen (nur dieses Board)
-      const { error: delListErr } = await supa
-        .from("custom_lists")
-        .delete()
-        .eq("board", board)
-        .eq("name", listName);
-
-      if (delListErr) {
-        console.error(delListErr);
-        alert("Fehler beim Löschen der Liste: " + (delListErr.message || JSON.stringify(delListErr)));
-        return;
-      }
-
-      // 3. Board neu laden
+      toast("OK", `Liste "${listName}" gelöscht.`);
       loadBoard(board);
     }
 
-    async function deleteTask(taskEl) {
+    async function deleteTask(taskEl){
       const id = taskEl.dataset.id;
       const board = taskEl.dataset.board;
       const table = board === "org" ? "org_tasks" : "cs2_tasks";
-      if (!confirm(`Aufgabe "${taskEl.dataset.title}" wirklich löschen?`)) return;
 
-      const { error } = await supa
-        .from(table)
-        .delete()
-        .eq("id", id);
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Löschen: " + (error.message || JSON.stringify(error)));
-        return;
-      }
+      const { error } = await supa.from(table).delete().eq("id", id);
+      if (error) { console.error(error); return toast("Fehler", error.message || "Task delete"); }
 
       taskEl.remove();
+      toast("OK", "Aufgabe gelöscht.");
     }
 
-    async function archiveTask(taskEl) {
+    async function archiveTask(taskEl){
       const id = taskEl.dataset.id;
       const board = taskEl.dataset.board;
       const table = board === "org" ? "org_tasks" : "cs2_tasks";
@@ -1175,305 +806,125 @@
         category: taskEl.dataset.category || null
       };
 
-      const { error: insertErr } = await supa
-        .from("archive_tasks")
-        .insert(payload);
+      const { error: insertErr } = await supa.from("archive_tasks").insert(payload);
+      if (insertErr) { console.error(insertErr); return toast("Fehler", insertErr.message || "archive insert"); }
 
-      if (insertErr) {
-        console.error(insertErr);
-        alert("Fehler beim Archivieren: " + (insertErr.message || JSON.stringify(insertErr)));
-        return;
-      }
-
-      const { error: delErr } = await supa
-        .from(table)
-        .delete()
-        .eq("id", id);
-
-      if (delErr) {
-        console.error(delErr);
-        alert("Fehler beim Entfernen vom Board: " + (delErr.message || JSON.stringify(delErr)));
-        return;
-      }
+      const { error: delErr } = await supa.from(table).delete().eq("id", id);
+      if (delErr) { console.error(delErr); return toast("Fehler", delErr.message || "remove from board"); }
 
       taskEl.remove();
+      toast("OK", "Ins Archiv verschoben.");
     }
 
-    /* Archiv laden + löschen */
-    const archiveListOrgaEl = document.getElementById("archive-list-orga");
-    const archiveListCs2El = document.getElementById("archive-list-cs2");
+    // Task modal + comments
+    const taskModalBackdrop = document.getElementById("task-modal-backdrop");
+    const taskModalTitle = document.getElementById("task-modal-title");
+    const taskModalInfo = document.getElementById("task-modal-info");
+    const taskModalDescription = document.getElementById("task-modal-description");
+    const taskModalSave = document.getElementById("task-modal-save");
+    const commentsBox = document.getElementById("task-comments");
+    const commentAuthor = document.getElementById("comment-author");
+    const commentContent = document.getElementById("comment-content");
+    const addCommentBtn = document.getElementById("task-modal-add-comment");
+    let currentTaskEl = null;
 
-    async function loadArchive() {
+    function closeTaskModal(){
+      taskModalBackdrop.classList.remove("active");
+      currentTaskEl = null;
+      commentsBox.innerHTML = "";
+      commentAuthor.value = "";
+      commentContent.value = "";
+    }
+    document.querySelectorAll("[data-close-task]").forEach(btn => btn.addEventListener("click", closeTaskModal));
+    taskModalBackdrop.addEventListener("click", (e)=>{ if (e.target === taskModalBackdrop) closeTaskModal(); });
+
+    async function loadComments(board, taskId){
       const { data, error } = await supa
-        .from("archive_tasks")
+        .from("task_comments")
         .select("*")
-        .order("archived_at", { ascending: false });
+        .eq("board", board)
+        .eq("task_id", taskId)
+        .order("created_at", { ascending:true });
 
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Laden des Archivs: " + (error.message || JSON.stringify(error)));
+      if (error) { console.error(error); toast("Fehler", error.message || "comments load"); return; }
+
+      commentsBox.innerHTML = "";
+      if (!data || data.length === 0){
+        commentsBox.innerHTML = `<div style="color:var(--muted);font-size:.85rem;">Noch keine Kommentare.</div>`;
         return;
       }
-
-      archiveListOrgaEl.innerHTML = "";
-      archiveListCs2El.innerHTML = "";
-
-      (data || []).forEach(item => {
-        const target = item.board === "org" ? archiveListOrgaEl : archiveListCs2El;
-        if (!target) return;
-
+      data.forEach(c => {
         const div = document.createElement("div");
-        div.className = "archive-item";
-
-        const delBtn = document.createElement("button");
-        delBtn.className = "archive-delete";
-        delBtn.title = "Archiv-Eintrag löschen";
-        delBtn.textContent = "🗑";
-        delBtn.addEventListener("click", async () => {
-          const { error: delErr } = await supa
-            .from("archive_tasks")
-            .delete()
-            .eq("id", item.id);
-          if (delErr) {
-            console.error(delErr);
-            alert("Fehler beim Löschen im Archiv: " + (delErr.message || JSON.stringify(delErr)));
-            return;
-          }
-          div.remove();
-        });
-
-        const title = document.createElement("div");
-        title.className = "archive-title";
-        title.textContent = item.title;
-
-        const meta = document.createElement("div");
-        meta.className = "archive-meta";
-        const dateStr = item.archived_at ? new Date(item.archived_at).toLocaleString() : "-";
-        meta.textContent = `Kategorie: ${item.category || "-"} · Status: ${item.status || "-"} · Archiviert: ${dateStr}`;
-
-        if (item.description) {
-          const desc = document.createElement("div");
-          desc.className = "task-desc";
-          desc.textContent = item.description;
-          div.appendChild(delBtn);
-          div.appendChild(title);
-          div.appendChild(meta);
-          div.appendChild(desc);
-        } else {
-          div.appendChild(delBtn);
-          div.appendChild(title);
-          div.appendChild(meta);
-        }
-        target.appendChild(div);
-      });
-    }
-
-    /* Teams */
-    const teamListEl = document.getElementById("team-list");
-    const teamForm = document.getElementById("team-form");
-    const playerForm = document.getElementById("player-form");
-    const teamNameEl = document.getElementById("team-name");
-    const teamMetaEl = document.getElementById("team-meta");
-    const teamImageEl = document.getElementById("team-image");
-    const playersEl = document.getElementById("players");
-    let currentTeamId = null;
-    let teamsCache = [];
-
-    async function loadTeams() {
-      const { data, error } = await supa
-        .from("teams")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Laden der Teams: " + (error.message || JSON.stringify(error)));
-        return;
-      }
-
-      teamsCache = data || [];
-      renderTeamList();
-      if (teamsCache.length && !currentTeamId) {
-        selectTeam(teamsCache[0]);
-      } else if (currentTeamId) {
-        const t = teamsCache.find(t => t.id === currentTeamId);
-        if (t) selectTeam(t); else resetTeamView();
-      }
-    }
-
-    function renderTeamList() {
-      teamListEl.innerHTML = "";
-      teamsCache.forEach(team => {
-        const div = document.createElement("div");
-        div.className = "team-item" + (team.id === currentTeamId ? " active" : "");
-        div.dataset.id = team.id;
-
-        const label = document.createElement("div");
-        label.className = "team-label";
-        label.innerHTML = `<span>${team.name}</span>`;
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "icon-btn danger";
-        deleteBtn.title = "Team löschen";
-        deleteBtn.textContent = "🗑";
-        deleteBtn.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          if (!confirm(`Team "${team.name}" inkl. Spieler löschen?`)) return;
-          await supa.from("players").delete().eq("team_id", team.id);
-          const { error } = await supa.from("teams").delete().eq("id", team.id);
-          if (error) {
-            console.error(error);
-            alert("Fehler beim Löschen des Teams: " + (error.message || JSON.stringify(error)));
-            return;
-          }
-          if (currentTeamId === team.id) {
-            currentTeamId = null;
-            resetTeamView();
-          }
-          loadTeams();
-        });
-
-        div.addEventListener("click", () => selectTeam(team));
-
-        div.appendChild(label);
-        div.appendChild(deleteBtn);
-        teamListEl.appendChild(div);
-      });
-    }
-
-    function resetTeamView() {
-      teamNameEl.textContent = "Kein Team ausgewählt";
-      teamMetaEl.textContent = "Bitte links ein Team auswählen.";
-      teamImageEl.removeAttribute("src");
-      playersEl.innerHTML = "";
-    }
-
-    async function selectTeam(team) {
-      currentTeamId = team.id;
-      renderTeamList();
-      teamNameEl.textContent = team.name;
-      if (team.image_url) teamImageEl.src = team.image_url;
-      else teamImageEl.removeAttribute("src");
-      await loadPlayers(team.id);
-    }
-
-    async function loadPlayers(teamId) {
-      const { data, error } = await supa
-        .from("players")
-        .select("*")
-        .eq("team_id", teamId)
-        .order("updated_at", { ascending: false });
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Laden der Spieler: " + (error.message || JSON.stringify(error)));
-        return;
-      }
-
-      playersEl.innerHTML = "";
-      let sumElo = 0;
-      let countElo = 0;
-
-      (data || []).forEach(player => {
-        if (player.elo != null) {
-          sumElo += player.elo;
-          countElo++;
-        }
-        const card = document.createElement("div");
-        card.className = "player-card";
-        card.dataset.id = player.id;
-
-        const delBtn = document.createElement("button");
-        delBtn.className = "player-delete";
-        delBtn.title = "Spieler löschen";
-        delBtn.textContent = "🗑";
-        delBtn.addEventListener("click", async () => {
-          if (!confirm(`Spieler "${player.ingame_name}" löschen?`)) return;
-          const { error: delErr } = await supa
-            .from("players")
-            .delete()
-            .eq("id", player.id);
-          if (delErr) {
-            console.error(delErr);
-            alert("Fehler beim Löschen des Spielers: " + (delErr.message || JSON.stringify(delErr)));
-            return;
-          }
-          loadPlayers(teamId);
-        });
-
-        card.innerHTML = `
-          <strong>${player.ingame_name}</strong>
-          <div>${player.real_name || ""}</div>
-          <div>Elo: ${player.elo ?? "-"}</div>
-          <div style="font-size:0.8rem;color:var(--muted);">
-            Beitritt: ${player.join_date || "-"}<br />
-            Zuletzt bearbeitet: ${player.updated_at ? new Date(player.updated_at).toLocaleDateString() : "-"}
+        div.className = "comment";
+        const when = c.created_at ? new Date(c.created_at).toLocaleString() : "";
+        div.innerHTML = `
+          <div class="comment-head">
+            <div><strong>${escapeHtml(c.author)}</strong></div>
+            <div>${escapeHtml(when)}</div>
           </div>
+          <div class="comment-body">${escapeHtml(c.content)}</div>
         `;
-        card.appendChild(delBtn);
-        playersEl.appendChild(card);
+        commentsBox.appendChild(div);
       });
-
-      if (countElo > 0) {
-        const avg = Math.round(sumElo / countElo);
-        teamMetaEl.textContent = `Spieler: ${data.length} · Durchschnitts-Elo: ${avg}`;
-      } else {
-        teamMetaEl.textContent = `Spieler: ${data.length} · Keine Elo-Daten`;
-      }
     }
 
-    teamForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = teamForm.name.value.trim();
-      const image_url = teamForm.image_url.value.trim() || null;
-      if (!name) return;
+    function escapeHtml(str){
+      return (str ?? "").toString()
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
 
-      const { data, error } = await supa
-        .from("teams")
-        .insert({ name, image_url })
-        .select()
-        .single();
+    async function openTaskModal(taskEl){
+      currentTaskEl = taskEl;
+      taskModalTitle.textContent = taskEl.dataset.title;
+      taskModalInfo.textContent = `Liste: ${taskEl.dataset.status} · Kategorie: ${taskEl.dataset.category || "Allgemein"}`;
+      taskModalDescription.value = taskEl.dataset.description || "";
+      taskModalBackdrop.classList.add("active");
 
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Anlegen des Teams: " + (error.message || JSON.stringify(error)));
-        return;
+      await loadComments(taskEl.dataset.board, parseInt(taskEl.dataset.id, 10));
+    }
+
+    taskModalSave.addEventListener("click", async () => {
+      if (!currentTaskEl) return;
+      const id = currentTaskEl.dataset.id;
+      const board = currentTaskEl.dataset.board;
+      const table = board === "org" ? "org_tasks" : "cs2_tasks";
+      const newDesc = taskModalDescription.value;
+
+      const { error } = await supa.from(table).update({ description:newDesc }).eq("id", id);
+      if (error) { console.error(error); return toast("Fehler", error.message || "save"); }
+
+      currentTaskEl.dataset.description = newDesc;
+      const descEl = currentTaskEl.querySelector(".task-desc");
+      if (descEl) descEl.textContent = newDesc;
+      else if (newDesc){
+        const d = document.createElement("div");
+        d.className = "task-desc";
+        d.textContent = newDesc;
+        currentTaskEl.appendChild(d);
       }
-
-      teamForm.reset();
-      await loadTeams();
-      selectTeam(data);
+      toast("OK", "Beschreibung gespeichert.");
     });
 
-    playerForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!currentTeamId) {
-        alert("Bitte zuerst ein Team auswählen.");
-        return;
-      }
-      const ingame_name = playerForm.ingame_name.value.trim();
-      const real_name = playerForm.real_name.value.trim() || null;
-      const eloVal = playerForm.elo.value.trim();
-      const elo = eloVal ? parseInt(eloVal, 10) : null;
-      const join_date = playerForm.join_date.value || null;
+    addCommentBtn.addEventListener("click", async () => {
+      if (!currentTaskEl) return;
+      const author = commentAuthor.value.trim();
+      const content = commentContent.value.trim();
+      if (!author) return toast("Hinweis", "Bitte deinen Namen eintragen.");
+      if (!content) return toast("Hinweis", "Bitte einen Kommentar schreiben.");
 
-      if (!ingame_name) return;
+      const board = currentTaskEl.dataset.board;
+      const task_id = parseInt(currentTaskEl.dataset.id, 10);
 
-      const { error } = await supa
-        .from("players")
-        .insert({ team_id: currentTeamId, ingame_name, real_name, elo, join_date });
+      const { error } = await supa.from("task_comments").insert({ board, task_id, author, content });
+      if (error) { console.error(error); return toast("Fehler", error.message || "comment insert"); }
 
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Anlegen des Spielers: " + (error.message || JSON.stringify(error)));
-        return;
-      }
-
-      playerForm.reset();
-      loadPlayers(currentTeamId);
+      commentContent.value = "";
+      toast("OK", "Kommentar gespeichert.");
+      await loadComments(board, task_id);
     });
 
-    /* Templates */
+    // Templates
     const templatesGrid = document.getElementById("templates-grid");
     const templateForm = document.getElementById("template-form");
     const templateModalBackdrop = document.getElementById("template-modal-backdrop");
@@ -1486,31 +937,17 @@
       const content = templateForm.content.value.trim();
       if (!title) return;
 
-      const { error } = await supa
-        .from("templates")
-        .insert({ title, content });
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Speichern der Vorlage: " + (error.message || JSON.stringify(error)));
-        return;
-      }
+      const { error } = await supa.from("templates").insert({ title, content });
+      if (error) { console.error(error); return toast("Fehler", error.message || "template insert"); }
 
       templateForm.reset();
       loadTemplates();
+      toast("OK", "Vorlage gespeichert.");
     });
 
-    async function loadTemplates() {
-      const { data, error } = await supa
-        .from("templates")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error(error);
-        alert("Fehler beim Laden der Vorlagen: " + (error.message || JSON.stringify(error)));
-        return;
-      }
+    async function loadTemplates(){
+      const { data, error } = await supa.from("templates").select("*").order("created_at", { ascending:true });
+      if (error) { console.error(error); return toast("Fehler", error.message || "templates load"); }
 
       templatesGrid.innerHTML = "";
       (data || []).forEach(tpl => {
@@ -1518,28 +955,215 @@
         card.className = "template-card";
         card.textContent = tpl.title;
         card.addEventListener("click", () => {
-          openTemplateModal(tpl);
+          templateModalTitle.textContent = tpl.title;
+          templateModalContent.value = tpl.content || "";
+          templateModalBackdrop.classList.add("active");
         });
         templatesGrid.appendChild(card);
       });
     }
+    function closeTemplateModal(){ templateModalBackdrop.classList.remove("active"); }
+    document.querySelectorAll("[data-close-template]").forEach(btn => btn.addEventListener("click", closeTemplateModal));
+    templateModalBackdrop.addEventListener("click", (e)=>{ if (e.target === templateModalBackdrop) closeTemplateModal(); });
 
-    function openTemplateModal(tpl) {
-      templateModalTitle.textContent = tpl.title;
-      templateModalContent.value = tpl.content || "";
-      templateModalBackdrop.classList.add("active");
+    // Archive
+    const archiveListOrgaEl = document.getElementById("archive-list-orga");
+    const archiveListCs2El = document.getElementById("archive-list-cs2");
+    async function loadArchive(){
+      const { data, error } = await supa.from("archive_tasks").select("*").order("archived_at", { ascending:false });
+      if (error) { console.error(error); return toast("Fehler", error.message || "archive load"); }
+
+      archiveListOrgaEl.innerHTML = "";
+      archiveListCs2El.innerHTML = "";
+
+      (data || []).forEach(item => {
+        const target = item.board === "org" ? archiveListOrgaEl : archiveListCs2El;
+        const div = document.createElement("div");
+        div.className = "archive-item";
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "archive-delete";
+        delBtn.title = "Löschen";
+        delBtn.textContent = "🗑";
+        delBtn.addEventListener("click", async () => {
+          const { error: delErr } = await supa.from("archive_tasks").delete().eq("id", item.id);
+          if (delErr) { console.error(delErr); return toast("Fehler", delErr.message || "archive delete"); }
+          div.remove();
+          toast("OK", "Archiv-Eintrag gelöscht.");
+        });
+
+        const title = document.createElement("div");
+        title.className = "archive-title";
+        title.textContent = item.title;
+
+        const meta = document.createElement("div");
+        meta.className = "archive-meta";
+        const dateStr = item.archived_at ? new Date(item.archived_at).toLocaleString() : "-";
+        meta.textContent = `Kategorie: ${item.category || "-"} · Status: ${item.status || "-"} · Archiviert: ${dateStr}`;
+
+        div.appendChild(delBtn);
+        div.appendChild(title);
+        div.appendChild(meta);
+
+        if (item.description){
+          const desc = document.createElement("div");
+          desc.className = "task-desc";
+          desc.textContent = item.description;
+          div.appendChild(desc);
+        }
+        target.appendChild(div);
+      });
     }
-    function closeTemplateModal() {
-      templateModalBackdrop.classList.remove("active");
+
+    // Teams
+    const teamListEl = document.getElementById("team-list");
+    const teamForm = document.getElementById("team-form");
+    const playerForm = document.getElementById("player-form");
+    const teamNameEl = document.getElementById("team-name");
+    const teamMetaEl = document.getElementById("team-meta");
+    const teamImageEl = document.getElementById("team-image");
+    const playersEl = document.getElementById("players");
+    let currentTeamId = null;
+    let teamsCache = [];
+
+    async function loadTeams(){
+      const { data, error } = await supa.from("teams").select("*").order("created_at", { ascending:true });
+      if (error) { console.error(error); return toast("Fehler", error.message || "teams load"); }
+      teamsCache = data || [];
+      renderTeamList();
+      if (teamsCache.length && !currentTeamId) selectTeam(teamsCache[0]);
+      else if (currentTeamId){
+        const t = teamsCache.find(t => t.id === currentTeamId);
+        if (t) selectTeam(t); else resetTeamView();
+      }
     }
-    document.querySelectorAll("[data-close-template]").forEach(btn => {
-      btn.addEventListener("click", closeTemplateModal);
-    });
-    templateModalBackdrop.addEventListener("click", (e) => {
-      if (e.target === templateModalBackdrop) closeTemplateModal();
+
+    function renderTeamList(){
+      teamListEl.innerHTML = "";
+      teamsCache.forEach(team => {
+        const div = document.createElement("div");
+        div.className = "team-item" + (team.id === currentTeamId ? " active" : "");
+        const name = document.createElement("div");
+        name.textContent = team.name;
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "icon-btn danger";
+        delBtn.title = "Team löschen";
+        delBtn.textContent = "🗑";
+        delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          twoClickConfirm(delBtn, async () => {
+            await supa.from("players").delete().eq("team_id", team.id);
+            const { error } = await supa.from("teams").delete().eq("id", team.id);
+            if (error) { console.error(error); return toast("Fehler", error.message || "team delete"); }
+            if (currentTeamId === team.id){ currentTeamId = null; resetTeamView(); }
+            toast("OK", "Team gelöscht.");
+            loadTeams();
+          });
+        });
+
+        div.addEventListener("click", () => selectTeam(team));
+
+        div.appendChild(name);
+        div.appendChild(delBtn);
+        teamListEl.appendChild(div);
+      });
+    }
+
+    function resetTeamView(){
+      teamNameEl.textContent = "Kein Team ausgewählt";
+      teamMetaEl.textContent = "Bitte links ein Team auswählen.";
+      teamImageEl.removeAttribute("src");
+      playersEl.innerHTML = "";
+    }
+
+    async function selectTeam(team){
+      currentTeamId = team.id;
+      renderTeamList();
+      teamNameEl.textContent = team.name;
+      if (team.image_url) teamImageEl.src = team.image_url;
+      else teamImageEl.removeAttribute("src");
+      await loadPlayers(team.id);
+    }
+
+    async function loadPlayers(teamId){
+      const { data, error } = await supa.from("players").select("*").eq("team_id", teamId).order("updated_at", { ascending:false });
+      if (error) { console.error(error); return toast("Fehler", error.message || "players load"); }
+
+      playersEl.innerHTML = "";
+      let sumElo = 0, countElo = 0;
+
+      (data || []).forEach(player => {
+        if (player.elo != null){ sumElo += player.elo; countElo++; }
+
+        const card = document.createElement("div");
+        card.className = "player-card";
+
+        const del = document.createElement("button");
+        del.className = "player-delete";
+        del.title = "Spieler löschen";
+        del.textContent = "🗑";
+        del.addEventListener("click", () => {
+          twoClickConfirm(del, async () => {
+            const { error: delErr } = await supa.from("players").delete().eq("id", player.id);
+            if (delErr) { console.error(delErr); return toast("Fehler", delErr.message || "player delete"); }
+            toast("OK", "Spieler gelöscht.");
+            loadPlayers(teamId);
+          });
+        });
+
+        card.innerHTML = `
+          <strong>${player.ingame_name}</strong>
+          <div>${player.real_name || ""}</div>
+          <div>Elo: ${player.elo ?? "-"}</div>
+          <div style="font-size:0.8rem;color:var(--muted);">
+            Beitritt: ${player.join_date || "-"}<br />
+            Zuletzt bearbeitet: ${player.updated_at ? new Date(player.updated_at).toLocaleDateString() : "-"}
+          </div>
+        `;
+        card.appendChild(del);
+        playersEl.appendChild(card);
+      });
+
+      if (countElo > 0) teamMetaEl.textContent = `Spieler: ${data.length} · Durchschnitts-Elo: ${Math.round(sumElo / countElo)}`;
+      else teamMetaEl.textContent = `Spieler: ${data.length} · Keine Elo-Daten`;
+    }
+
+    teamForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = teamForm.name.value.trim();
+      const image_url = teamForm.image_url.value.trim() || null;
+      if (!name) return;
+
+      const { data, error } = await supa.from("teams").insert({ name, image_url }).select().single();
+      if (error) { console.error(error); return toast("Fehler", error.message || "team insert"); }
+
+      teamForm.reset();
+      toast("OK", "Team erstellt.");
+      await loadTeams();
+      selectTeam(data);
     });
 
-    /* Initial Load */
+    playerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentTeamId) return toast("Hinweis", "Bitte zuerst ein Team auswählen.");
+
+      const ingame_name = playerForm.ingame_name.value.trim();
+      const real_name = playerForm.real_name.value.trim() || null;
+      const eloVal = playerForm.elo.value.trim();
+      const elo = eloVal ? parseInt(eloVal, 10) : null;
+      const join_date = playerForm.join_date.value || null;
+      if (!ingame_name) return;
+
+      const { error } = await supa.from("players").insert({ team_id: currentTeamId, ingame_name, real_name, elo, join_date });
+      if (error) { console.error(error); return toast("Fehler", error.message || "player insert"); }
+
+      playerForm.reset();
+      toast("OK", "Spieler hinzugefügt.");
+      loadPlayers(currentTeamId);
+    });
+
+    // Initial load
     loadBoard("org");
     loadBoard("cs2");
     loadTeams();
